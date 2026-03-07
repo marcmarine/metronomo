@@ -55,7 +55,7 @@ export type UsePendulumFromAudioTimeParams = {
 export type UsePendulumFromAudioTimeResult = {
   /**
    * Inline style you can apply to the pendulum element.
-   * Includes `transform: rotate(...)` and also sets a CSS variable `--pendulo-angle`.
+   * Includes `transform: rotate(...)` and also sets a CSS variable `--pendulum-angle`.
    */
   pendulumStyle: React.CSSProperties
 
@@ -177,7 +177,7 @@ export function usePendulumFromAudioTime(
       animation: 'none',
       transform: `rotate(${angle}deg)`,
       // Expose for CSS consumers if desired.
-      ['--pendulo-angle' as any]: `${angle}deg`,
+      ['--pendulum-angle' as any]: `${angle}deg`,
       willChange: 'transform',
     }
   }, [angleDeg])
