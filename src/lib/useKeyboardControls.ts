@@ -103,8 +103,8 @@ export function useKeyboardControls(
         return
       }
 
-      // Play/stop (Space)
-      if (key === ' ' || key === 'Spacebar' || event.code === 'Space') {
+      // Play/stop (P)
+      if (key === 'p' || key === 'P') {
         if (opts.preventDefault) event.preventDefault()
         actionsRef.current.togglePlay()
         return
