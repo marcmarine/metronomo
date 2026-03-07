@@ -85,7 +85,7 @@ const Metronomo = () => {
           startPendulo(tempo)
           scheduler(); // kick off scheduling
         } else {
-          window.clearTimeout(timerID); 
+          window.clearTimeout(timerID);
           stopPendulo()
         }
       })
@@ -178,5 +178,5 @@ const Metronomo = () => {
       </div>
   );
 }
- 
+
 export default Metronomo

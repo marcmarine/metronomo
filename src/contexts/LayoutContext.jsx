@@ -13,5 +13,5 @@ const LayoutContextProvider = (props) => {
     </LayoutContext.Provider>
   );
 }
- 
+
 export default LayoutContextProvider;

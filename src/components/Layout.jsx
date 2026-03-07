@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import FullScreen from 'react-full-screen'
-import Sidebar from '../components/Sidebar'
+import Sidebar from '../components/Sidebar.jsx'
 import Metronomo from '../components/Metronomo'
 import Controls from '../components/Controls'
 import { LayoutContext } from '../contexts/LayoutContext'
