@@ -25,4 +25,12 @@ const LayoutContextProvider = ({ children }: LayoutContextProviderProps) => {
   return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>
 }
 
+export const useLayoutContext = () => {
+  const context = React.useContext(LayoutContext)
+  if (context === undefined) {
+    throw new Error('useLayoutContext must be used within a LayoutContextProvider')
+  }
+  return context
+}
+
 export default LayoutContextProvider;

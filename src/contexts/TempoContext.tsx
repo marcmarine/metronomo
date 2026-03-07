@@ -53,4 +53,12 @@ const TempoContextProvider = ({ children }: TempoContextProviderProps) => {
   return <TempoContext.Provider value={value}>{children}</TempoContext.Provider>
 }
 
+export const useTempoContext = () => {
+  const context = React.useContext(TempoContext)
+  if (context === undefined) {
+    throw new Error('useTempoContext must be used within a TempoContextProvider')
+  }
+  return context
+}
+
 export default TempoContextProvider;

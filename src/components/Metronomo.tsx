@@ -1,19 +1,16 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react'
-import { TempoContext, type TempoContextValue } from '../contexts/TempoContext'
-
-import './Metronomo.css'
-
+import React, { useEffect, useMemo, useRef } from 'react'
+import { useTempoContext } from '../contexts/TempoContext'
 import { getAudioContext, loadSample } from '../lib/audioSample'
 import { MetronomeScheduler } from '../lib/metronomeScheduler'
 import { usePendulumFromAudioTime } from '../lib/usePendulumFromAudioTime'
 
+import './Metronomo.css'
+
+
 const TICK_SAMPLE_URL = 'audio/tap.wav'
 
 const Metronomo: React.FC = () => {
-  const tempoCtx = useContext(TempoContext) as TempoContextValue | undefined
-  if (!tempoCtx) return null
-
-  const { tempo, isPlaying, tempos } = tempoCtx
+  const { tempo, isPlaying, tempos } = useTempoContext()
 
   /**
    * Keep a stable AudioContext instance for the lifetime of this component.

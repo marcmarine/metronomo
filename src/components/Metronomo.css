@@ -63,7 +63,7 @@ body {
   position: absolute;
   width: 75px;
   transform: translateX(calc(-50% + (var(--pendulum-width) / 2)));
-  transition: all 200ms;
+  transition: all 80ms;
 }
 
 .metronome__stroke {
