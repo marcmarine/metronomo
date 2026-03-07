@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-export type PendulumWaveform = 'cosine'
-
 export type UsePendulumFromAudioTimeParams = {
   /**
    * AudioContext used as the single source of truth for time.
@@ -36,14 +34,6 @@ export type UsePendulumFromAudioTimeParams = {
    * Default: 0.5
    */
   zeroCrossingOffsetBeats?: number
-
-  /**
-   * Waveform used for the pendulum.
-   * Cosine is smooth and recommended.
-   *
-   * Default: 'cosine'
-   */
-  waveform?: PendulumWaveform
 
   /**
    * If true, calls `audioCtx.resume()` when starting (best-effort).
@@ -89,7 +79,6 @@ export function usePendulumFromAudioTime(
     maxDegrees = 15,
     periodBeats = 2,
     zeroCrossingOffsetBeats = 0.5,
-    waveform = 'cosine',
     autoResumeAudioContext = true,
   } = params
 
@@ -165,7 +154,6 @@ export function usePendulumFromAudioTime(
     tempoBpm,
     maxDegrees,
     periodSeconds,
-    waveform,
     zeroCrossingOffsetBeats,
     autoResumeAudioContext,
   ])
