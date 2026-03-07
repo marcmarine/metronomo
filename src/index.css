@@ -4,3 +4,20 @@ body,
 .fullscreen {
   background-color:#7e8eb1;
 }
+
+body {
+  overflow: hidden;
+  margin: 0;
+}
+
+.fullscreen {
+  min-height: 100vh;
+  padding-top: 1.5rem;
+  place-content: center;
+}
+
+@media (max-width: 600px) {
+  .fullscreen {
+    padding-top: 0;
+  }
+}

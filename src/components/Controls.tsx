@@ -8,14 +8,14 @@ const Controls = () => {
   const buttonBaseClass = "flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#d1d1d1] text-[#312f31] border-6 border-[#312f31] transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
 
   return (
-    <div className="md:fixed top-4 right-4 flex md:flex-col gap-2 z-50 md:top-6 md:right-6 justify-center max-md:mt-8">
+    <div className="md:fixed top-4 right-4 flex md:flex-col gap-2 z-50 md:top-6 md:right-6 justify-center max-md:mt-3">
       {/* Menu Toggle Button */}
       <button
         className={`${buttonBaseClass} bg-[#666]!`}
         onClick={toggleSidebar}
         title="Toggle Menu"
       >
-        <svg className="w-full h-full p-2 stroke-[#312f31] stroke-5" viewBox="0 0 40 40">
+        <svg className="w-full h-full md:w-5/6 md:h-5/6 p-2 stroke-[#312f31] stroke-8" viewBox="0 0 40 40">
           <title>Icono Menu</title>
           <line x1="5" y1="0" x2="5" y2="40"></line>
           <line x1="20" y1="0" x2="20" y2="40"></line>
