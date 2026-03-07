@@ -1,22 +1,27 @@
 :root {
   --palo-ancho: 10px;
+  --metronome-width: 300px;
 }
 
 body {
   overflow: hidden;
+  margin: 0;
+}
+
+.fullscreen {
+  min-height: 100vh;
+  padding-top: 1.5rem;
+  place-content: center;
 }
 
 .metronomo {
-  max-width: 300px;
-  margin: 17vh auto;
+  max-width: var(--metronome-width);
+  margin: auto;
   position: relative;
 }
 
 .tempo {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  text-align: center;
   font-size: 2rem;
   color: #313131;
   font-family: monospace;
@@ -25,7 +30,7 @@ body {
 .mask {
   position: absolute;
   overflow: hidden;
-  width: calc(300px - var(--palo-ancho));
+  width: calc(var(--metronome-width) - var(--palo-ancho));
   height: 355px;
   top: 12px;
 }
