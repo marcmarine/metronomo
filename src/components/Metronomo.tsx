@@ -138,6 +138,7 @@ const Metronomo: React.FC = () => {
   }, [tempos, tempo])
 
   return (
+    <>
     <div className="metronomo">
       <div className="mask">
         <div className="pendulo-wrap">
@@ -244,8 +245,9 @@ const Metronomo: React.FC = () => {
         />
       </svg>
 
-      <p className="tempo">{tempo} ppm</p>
     </div>
+      <p className="tempo">{tempo} ppm</p>
+    </>
   )
 }
 
