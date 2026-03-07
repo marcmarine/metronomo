@@ -16,6 +16,12 @@ body {
   place-content: center;
 }
 
+@media (max-width: 600px) {
+  .fullscreen {
+    padding-top: 0;
+  }
+}
+
 .metronome {
   position: relative;
   max-width: var(--metronome-width);
@@ -28,6 +34,12 @@ body {
   color: #313131;
   font-weight: bolder;
   font-family: monospace;
+}
+
+@media (max-width: 600px) {
+  .tempo {
+    display: none;
+  }
 }
 
 .metronome__pendulum-clip {
@@ -43,6 +55,14 @@ body {
   width: calc(var(--metronome-width) - var(--pendulum-width));
   height: 307px;
   top: 12px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+   cursor: grab;
+}
+
+.metronome__pendulum-inner:active {
+  cursor: grabbing;
 }
 
 .metronome__pendulum {
@@ -57,13 +77,18 @@ body {
   width: var(--pendulum-width);
   border-radius: 8px;
   background: #313131;
+
+  display: flex;
+  justify-content: center;
 }
 
 .metronome__weight {
   position: absolute;
   width: 75px;
-  transform: translateX(calc(-50% + (var(--pendulum-width) / 2)));
-  transition: all 80ms;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: top 80ms;
+  pointer-events: none;
 }
 
 .metronome__stroke {
@@ -87,76 +112,4 @@ body {
   fill: none;
   stroke: #313131;
   stroke-width: var(--stroke-width-thin);
-}
-
-.controls {
-  opacity: 1;
-  position: fixed;
-  top: 4.8rem;
-  right: 1rem;
-  display: flex;
-  flex-direction: column;
-  z-index: 1;
-}
-
-.controls button {
-  margin-bottom: 0.5rem;
-}
-
-.controls:hover {
-  opacity: 1;
-}
-
-/* Button styling (deduped; keep final intended look) */
-.button {
-  cursor: pointer;
-  background-color: #d1d1d1;
-  color: #312f31;
-  border: 0.4em solid #312f31;
-  border-radius: 50%;
-  -webkit-tap-highlight-color: transparent;
-  transform: translateZ(0) translateY(0);
-  outline: 0;
-  font-weight: bold;
-  font-size: 1rem;
-  padding: 0.8em;
-}
-
-.button:hover {
-  background-color: #d1d1d1;
-  color: #313131;
-}
-
-.button:active {
-  transform: translateZ(0) translateY(0) scale(0.95);
-}
-
-.button--control {
-  display: flex;
-  font-size: 0.8em;
-  width: 4em;
-  height: 4em;
-  border-radius: 50%;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-}
-
-.layout-buttons {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-}
-
-.button--selector {
-  background-color: #666;
-}
-
-.button--control svg {
-  width: 100%;
-  height: 100%;
-}
-
-.button__icon-svg {
-  stroke: #312f31;
-  stroke-width: 5;
 }

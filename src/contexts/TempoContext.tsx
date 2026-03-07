@@ -4,6 +4,7 @@ export type TempoContextValue = {
   tempo: number
   tempos: number[]
   isPlaying: boolean
+  setTempo: (tempo: number) => void
   increaseTempo: () => void
   decreaseTempo: () => void
   togglePlay: () => void
@@ -27,16 +28,22 @@ const TempoContextProvider = ({ children }: TempoContextProviderProps) => {
     []
   )
 
-  const [tempo, setTempo] = useState<number>(tempos[8] ?? 60)
+  const [tempo, setTempoState] = useState<number>(tempos[8] ?? 60)
+
+  const setTempo = (nextTempo: number) => {
+    if (!tempos.includes(nextTempo)) return
+    setIsPlaying(false)
+    setTempoState(nextTempo)
+  }
 
   const increaseTempo = () => {
     setIsPlaying(false)
-    setTempo((t) => tempos[Math.min(tempos.indexOf(t) + 1, tempos.length - 1)] ?? t)
+    setTempoState((t) => tempos[Math.min(tempos.indexOf(t) + 1, tempos.length - 1)] ?? t)
   }
 
   const decreaseTempo = () => {
     setIsPlaying(false)
-    setTempo((t) => tempos[Math.max(tempos.indexOf(t) - 1, 0)] ?? t)
+    setTempoState((t) => tempos[Math.max(tempos.indexOf(t) - 1, 0)] ?? t)
   }
 
   const togglePlay = () => setIsPlaying((prev) => !prev)
@@ -45,6 +52,7 @@ const TempoContextProvider = ({ children }: TempoContextProviderProps) => {
     tempo,
     tempos,
     isPlaying,
+    setTempo,
     increaseTempo,
     decreaseTempo,
     togglePlay,
