@@ -1,15 +1,4 @@
 :root {
-  --bpm: 60;
-  
-  --peso-alto: 48px;
-  --espaciado-divisiones:2.9vh;
-  
-  --times: calc(60 / var(--bpm) * 2s);
-  --tick-tock-time: var(--times);
-  
-  /* TODO: Arreglar esto */
-  --top: calc(var(--bpm) / 40 * 6 * var(--espaciado-divisiones) - 5.5 * var(--espaciado-divisiones));
-  
   --palo-ancho: 10px;
 }
 
@@ -19,9 +8,8 @@ body {
 
 .metronomo {
   max-width: 300px;
-  margin-top: 50%;
   margin: 17vh auto;
-  position:relative;
+  position: relative;
 }
 
 .tempo {
@@ -35,65 +23,70 @@ body {
 }
 
 .mask {
-  position:absolute;
-  overflow:hidden;
-  width: 200px;
-  height: 355px;  
-  padding-left: calc(50% - var(--palo-ancho) / 2);
+  position: absolute;
+  overflow: hidden;
+  width: calc(300px - var(--palo-ancho));
+  height: 355px;
   top: 12px;
 }
 
-.pendulo {  
+/* Wrapper that centers the pendulum horizontally without interfering with rotation */
+.pendulo-wrap {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.pendulo {
   transform-origin: 50% 100%;
-  position:absolute;
-  left: calc(50% - var(--stick-width) / 2);
+  position: absolute;
+
+  /* Wrapper handles centering; pendulum starts at wrapper's left edge */
+  left: 0;
   top: 0px;
+
   height: 420px;
-  background:#313131;
   width: var(--palo-ancho);
   border-radius: 8px;
-  
-  /*animation: tick var(--tick-tock-time) ease-in-out infinite;*/
-	animation-name: tick;
-	animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
+  background: #313131;
+
+  /* Pendulum transform is driven by React/JS (AudioContext time) */
+  animation: none;
+  will-change: transform;
 }
 
 .peso {
-  /* display: none; */
   position: absolute;
   width: 75px;
-  /* border-radius: 8px; */
-  /* border: 8px solid #313131; */
   left: -33px;
   transition: all 50ms;
 }
 
 .borde {
   fill: none;
-  stroke:#313131;
-  stroke-width:10;
-  stroke-linecap:round;
-  stroke-linejoin:round;
+  stroke: #313131;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-miterlimit: 10;
 }
 
 .base-inferior {
-  fill:#C73D42;
+  fill: #c73d42;
 }
 
 .base-superior {
-  fill:#D1D1D1;
+  fill: #d1d1d1;
 }
 
-.marca { 
+.marca {
   fill: none;
-  stroke:#313131;
+  stroke: #313131;
   stroke-width: 4;
 }
 
 .controls {
-  /* display: none; */
   opacity: 1;
   position: fixed;
   top: 4.8rem;
@@ -103,56 +96,40 @@ body {
 }
 
 .controls button {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .controls:hover {
   opacity: 1;
 }
 
-.button {
-  border-radius: 0;
-  border: 0;
-  background-color: #313131;
-  font-weight: bold;
-  font-size: 1rem;
-  padding: .8em;
-  outline: 0;
-  cursor: pointer;
-  color: #D1D1D1;
-}
-
-.button:hover {
-  background-color: #D1D1D1;
-  color: #313131;
-}
-
-@keyframes tick {
-  0%,
-	100% { transform: rotate(15deg)}
-	50% { transform: rotate(-15deg)}
-}
-
+/* Button styling (deduped; keep final intended look) */
 .button {
   cursor: pointer;
   background-color: #d1d1d1;
   color: #312f31;
-  border: .4em solid #312f31;
+  border: 0.4em solid #312f31;
   border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  transform: translateY(0);
-  /* box-shadow: 0 0.3em 0.5em 0 rgba(0,0,0,.1); */
+  transform: translateZ(0) translateY(0);
+  outline: 0;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.8em;
+}
+
+.button:hover {
+  background-color: #d1d1d1;
+  color: #313131;
 }
 
 .button:active {
-  transform: scale(.95);
+  transform: translateZ(0) translateY(0) scale(0.95);
 }
 
 .button--control {
   display: flex;
-  font-size: .8em;
+  font-size: 0.8em;
   width: 4em;
   height: 4em;
   border-radius: 50%;

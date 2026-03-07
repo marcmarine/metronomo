@@ -1,163 +1,176 @@
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import { TempoContext, type TempoContextValue } from '../contexts/TempoContext'
 
 import './Metronomo.css'
 
-type PendulumStyle = {
-  animationDuration: string
-}
+import { getAudioContext, loadSample } from '../lib/audioSample'
+import { MetronomeScheduler } from '../lib/metronomeScheduler'
+import { usePendulumFromAudioTime } from '../lib/usePendulumFromAudioTime'
 
-const Metronomo = () => {
+const TICK_SAMPLE_URL = 'audio/tap.wav'
+
+const Metronomo: React.FC = () => {
   const tempoCtx = useContext(TempoContext) as TempoContextValue | undefined
   if (!tempoCtx) return null
 
   const { tempo, isPlaying, tempos } = tempoCtx
 
-  const [pendulumStyle, setPendulumStyle] = useState<PendulumStyle>({ animationDuration: '0s' })
-
-  // Keep animation changes in React state instead of mutating the DOM via querySelector.
-  useEffect(() => {
-    if (!isPlaying) {
-      setPendulumStyle({ animationDuration: '0s' })
-      return
-    }
-
-    const duration = 60 / tempo
-    setPendulumStyle({ animationDuration: duration * 2 + 's' })
-  }, [isPlaying, tempo])
-
+  /**
+   * Keep a stable AudioContext instance for the lifetime of this component.
+   * (Do not recreate it per render.)
+   */
   const audioCtxRef = useRef<AudioContext | null>(null)
-
   if (!audioCtxRef.current) {
-    const Ctx = (window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext) as
-      | typeof AudioContext
-      | undefined
-
-    if (Ctx) {
-      audioCtxRef.current = new Ctx()
-    }
+    audioCtxRef.current = getAudioContext()
   }
+  const audioCtx = audioCtxRef.current
 
-  const ctx = audioCtxRef.current
-  if (!ctx) return null
-
-  // From here on, treat it as non-null for TypeScript.
-  const audioCtx: AudioContext = ctx
-
-  // Loading ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  async function getFile(audioContext: AudioContext, filepath: string): Promise<AudioBuffer> {
-    const response = await fetch(filepath)
-    const arrayBuffer = await response.arrayBuffer()
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-    return audioBuffer
-  }
-
-  function playSample(audioContext: AudioContext, audioBuffer: AudioBuffer): AudioBufferSourceNode {
-    const sampleSource = audioContext.createBufferSource()
-    sampleSource.buffer = audioBuffer
-    sampleSource.connect(audioContext.destination)
-    sampleSource.start()
-    return sampleSource
-  }
-
-  const samplePromise = useMemo(() => {
-    const filePath = 'audio/tap.wav'
-    return getFile(audioCtx, filePath)
-  }, [audioCtx])
-
+  /**
+   * Preload & decode the tick sample once per AudioContext.
+   * NOTE: This is async; we store the decoded buffer in a ref once resolved.
+   */
+  const tickBufferRef = useRef<AudioBuffer | null>(null)
   useEffect(() => {
-    if (!isPlaying) return
+    if (!audioCtx) return
 
     let cancelled = false
 
-    // Scheduling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    const lookahead = 25.0 // ms
-    const scheduleAheadTime = 0.1 // sec
-    let currentNote = 0
-    let nextNoteTime = 0.0
-
-    function nextNote() {
-      const secondsPerBeat = 60.0 / tempo
-      nextNoteTime += secondsPerBeat
-      currentNote++
-    }
-
-    const notesInQueue: Array<{ note: number; time: number }> = []
-    let dtmf: AudioBuffer | null = null
-
-    function scheduleNote(beatNumber: number, time: number) {
-      notesInQueue.push({ note: beatNumber, time })
-      if (currentNote !== 0 && dtmf) {
-        playSample(audioCtx, dtmf)
-      }
-    }
-
-    let timerID: number | undefined
-
-    function scheduler() {
-      // Do not keep scheduling if we've been stopped/unmounted.
-      if (cancelled) return
-
-      while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
-        scheduleNote(currentNote, nextNoteTime)
-        nextNote()
-      }
-      timerID = window.setTimeout(scheduler, lookahead)
-    }
-
-    samplePromise.then((sample) => {
-      if (cancelled) return
-
-      dtmf = sample
-
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume()
-      }
-
-      nextNoteTime = audioCtx.currentTime
-      scheduler()
-    })
+    loadSample(audioCtx, TICK_SAMPLE_URL)
+      .then((buf) => {
+        if (cancelled) return
+        tickBufferRef.current = buf
+      })
+      .catch(() => {
+        // keep silent; scheduling will just no-op until buffer is available
+        // (you can add UI feedback if desired)
+      })
 
     return () => {
       cancelled = true
-      if (timerID !== undefined) window.clearTimeout(timerID)
     }
-  }, [audioCtx, isPlaying, tempo, samplePromise])
+  }, [audioCtx])
 
-  const weightPosition = `calc( ( ${tempos.indexOf(tempo)} + 1 ) * 8.62px)`
-  
+  /**
+   * Visual pendulum driven from the AudioContext clock.
+   * This returns:
+   * - `pendulumStyle` to apply directly to the `.pendulo` element
+   * - `zeroCrossingTime` which is an AudioContext absolute time where the pendulum is at 0°
+   *   (we use it to align the first tick)
+   */
+  const { pendulumStyle, zeroCrossingTime } = usePendulumFromAudioTime({
+    audioCtx,
+    isPlaying,
+    tempoBpm: tempo,
+    maxDegrees: 15,
+    periodBeats: 2,
+    // Schedule the first 0° crossing half a beat after starting.
+    // We will align the first tick to this same instant.
+    zeroCrossingOffsetBeats: 0.45,
+    autoResumeAudioContext: true,
+  })
+
+  /**
+   * Audio scheduler instance, isolated from React rendering.
+   * We keep it in a ref and only start/stop/update it via effects.
+   */
+  const schedulerRef = useRef<MetronomeScheduler | null>(null)
+
+  // Create the scheduler once we have an AudioContext.
+  useEffect(() => {
+    if (!audioCtx) return
+
+    if (!schedulerRef.current) {
+      schedulerRef.current = new MetronomeScheduler(audioCtx, tickBufferRef.current, {
+        lookaheadMs: 25,
+        scheduleAheadTimeSec: 0.2,
+        gain: 1,
+      })
+    }
+
+    return () => {
+      // Stop on unmount
+      schedulerRef.current?.stop()
+      schedulerRef.current = null
+    }
+  }, [audioCtx])
+
+  // Keep scheduler buffer up to date when the sample finishes loading.
+  useEffect(() => {
+    const s = schedulerRef.current
+    if (!s) return
+    s.setBuffer(tickBufferRef.current)
+  })
+
+  // Start/stop and tempo updates.
+  useEffect(() => {
+    const s = schedulerRef.current
+    if (!audioCtx || !s) return
+
+    if (!isPlaying) {
+      s.stop()
+      return
+    }
+
+    // Ensure the scheduler tempo is up to date.
+    s.setTempo(tempo)
+
+    // Align the first tick to the pendulum's 0° reference time if available.
+    // If not available yet (first render), fall back to a computed half-beat offset.
+    const secondsPerBeat = 60 / Math.max(1, tempo)
+    const fallbackT0 = audioCtx.currentTime + 0.5 * secondsPerBeat
+
+    const t0 = zeroCrossingTime ?? fallbackT0
+
+    // Start (no-op if already running). If already running, we don't want to reset t0,
+    // otherwise you’ll hear a phase jump. So only start if not running.
+    if (!s.getState().running) {
+      void s.start({ tempoBpm: tempo, t0 })
+    }
+
+    return () => {
+      // On dependency changes, don't stop here; stop is handled when isPlaying becomes false.
+      // This avoids cutting off playback on tempo adjustments.
+    }
+  }, [audioCtx, isPlaying, tempo, zeroCrossingTime])
+
+  const weightPosition = useMemo(() => {
+    return `calc( ( ${tempos.indexOf(tempo)} + 1 ) * 8.62px)`
+  }, [tempos, tempo])
+
   return (
     <div className="metronomo">
       <div className="mask">
-        <div className="pendulo" style={pendulumStyle}>
-          <label className="peso" style={{ top: weightPosition }}>
-            <svg viewBox="0 0 104 94">
-              <g id="conjunto-palo">
-                <g id="peso">
-                  <g id="peso-base">
-                    <path
-                      fill="#666"
-                      d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
-                    />
-                    <path
-                      fill="none"
-                      stroke="#313131"
-                      strokeMiterlimit="10"
-                      strokeWidth="10"
-                      d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
-                    />
-                  </g>
-                  <g id="peso-ciruclos">
-                    <circle id="circulo2" cx="72.6" cy="28.3" r="12.5" fill="#313131" />
-                    <circle id="circulo1" cx="31.6" cy="28.3" r="12.5" fill="#313131" />
+        <div className="pendulo-wrap">
+          <div className="pendulo" style={pendulumStyle}>
+            <label className="peso" style={{ top: weightPosition }}>
+              <svg viewBox="0 0 104 94">
+                <g id="conjunto-palo">
+                  <g id="peso">
+                    <g id="peso-base">
+                      <path
+                        fill="#666"
+                        d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
+                      />
+                      <path
+                        fill="none"
+                        stroke="#313131"
+                        strokeMiterlimit="10"
+                        strokeWidth="10"
+                        d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
+                      />
+                    </g>
+                    <g id="peso-ciruclos">
+                      <circle id="circulo2" cx="72.6" cy="28.3" r="12.5" fill="#313131" />
+                      <circle id="circulo1" cx="31.6" cy="28.3" r="12.5" fill="#313131" />
+                    </g>
                   </g>
                 </g>
-              </g>
-            </svg>
-          </label>
+              </svg>
+            </label>
+          </div>
         </div>
       </div>
+
       <svg id="metronomo" viewBox="795 350.9 410 792.2">
         <line id="suelo" className="borde" x1="800" y1="1138.1" x2="1200" y2="1138.1" />
         <g id="patas">
@@ -230,6 +243,7 @@ const Metronomo = () => {
             c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7c0-8.5,4.7-15.9,11.6-19.8L864.4,1091.6z"
         />
       </svg>
+
       <p className="tempo">{tempo} ppm</p>
     </div>
   )
