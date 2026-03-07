@@ -4,15 +4,26 @@ import Sidebar from '../components/Sidebar'
 import Metronomo from '../components/Metronomo'
 import Controls from '../components/Controls'
 import { LayoutContext } from '../contexts/LayoutContext'
+import { TempoContext } from '../contexts/TempoContext'
+import { useKeyboardControls } from '../lib/useKeyboardControls'
 
 const Layout = () => {
   const layout = useContext(LayoutContext)
+  const tempoCtx = useContext(TempoContext)
 
-  // Should never happen if Layout is rendered under LayoutContextProvider,
+  // Should never happen if Layout is rendered under the providers,
   // but guards against undefined at runtime and satisfies TypeScript.
-  if (!layout) return null
+  if (!layout || !tempoCtx) return null
 
-  const { isFullScreen } = layout
+  const { isFullScreen, toggleFullScreen } = layout
+  const { increaseTempo, decreaseTempo, togglePlay } = tempoCtx
+
+  useKeyboardControls({
+    increaseTempo,
+    decreaseTempo,
+    togglePlay,
+    toggleFullScreen,
+  })
 
   return (
     <FullScreen enabled={isFullScreen}>

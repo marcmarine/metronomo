@@ -1,4 +1,4 @@
-import { useContext, useCallback } from 'react'
+import { useContext } from 'react'
 import { LayoutContext } from '../contexts/LayoutContext'
 import { TempoContext } from '../contexts/TempoContext'
 
@@ -13,32 +13,10 @@ const Sidebar = () => {
   const { sidebar, isFullScreen, toggleFullScreen } = layout
   const { tempo, tempos, increaseTempo, decreaseTempo, togglePlay, isPlaying } = tempoCtx
 
-  const keyPressed = useCallback(
-    (event) => {
-      if (event.keyCode === 70) {
-        toggleFullScreen()
-      }
-      if (event.keyCode === 32) {
-        togglePlay()
-      }
-      if ((event.keyCode === 37 || event.keyCode === 40) && tempo !== 40) {
-        decreaseTempo()
-      }
-      if ((event.keyCode === 39 || event.keyCode === 38) && tempo !== 208) {
-        increaseTempo()
-      }
-    },
-    [toggleFullScreen, togglePlay, tempo, decreaseTempo, increaseTempo]
-  )
-
   return (
     <>
       {sidebar &&
-        <div
-          className="controls"
-          tabIndex={0}
-          onKeyUp={keyPressed}
-        >
+        <div className="controls">
           <button className="button button--control" onClick={toggleFullScreen}>
             {isFullScreen ? (
               <svg viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>

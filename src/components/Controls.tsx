@@ -1,4 +1,4 @@
-import { useContext, useCallback } from 'react'
+import { useContext } from 'react'
 import { LayoutContext } from '../contexts/LayoutContext'
 
 const Controls = () => {
@@ -10,17 +10,8 @@ const Controls = () => {
 
   const { toggleSidebar } = layout
 
-  const keyPressed = useCallback(
-    (event) => {
-      if (event.keyCode === 77) {
-        toggleSidebar()
-      }
-    },
-    [toggleSidebar]
-  )
-
   return (
-    <div className="layout-buttons" tabIndex={0} onKeyUp={keyPressed}>
+    <div className="layout-buttons">
       <button className="button button--control button--selector" onClick={toggleSidebar}>
         <svg className="button__icon-svg" viewBox="0 0 40 40">
           <title>Icono Menu</title>
