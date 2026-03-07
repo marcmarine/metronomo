@@ -1,7 +1,6 @@
-import React  from 'react'
 import TempoContextProvider from '../contexts/TempoContext'
 import LayoutContextProvider from '../contexts/LayoutContext'
-import Layout from './Layout.jsx'
+import Layout from './Layout'
 
 function App() {
   return (
