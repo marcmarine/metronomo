@@ -1,5 +1,5 @@
 
-import FullScreen from 'react-full-screen'
+import FullScreen from './FullScreen'
 import Metronomo from '../components/Metronomo'
 import Controls from '../components/Controls'
 import {  useLayoutContext } from '../contexts/LayoutContext'
@@ -24,7 +24,12 @@ const Layout = () => {
   })
 
   return (
-    <FullScreen enabled={isFullScreen}>
+    <FullScreen
+      enabled={isFullScreen}
+      onChange={(enabled) => {
+        if (enabled !== isFullScreen) toggleFullScreen()
+      }}
+    >
       <Metronomo />
       <Controls />
     </FullScreen>

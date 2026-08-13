@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import App from './components/App'
 
 import './index.css'
@@ -9,4 +9,4 @@ if (!rootEl) {
   throw new Error('Root element #root not found')
 }
 
-ReactDOM.render(<App />, rootEl)
+createRoot(rootEl).render(<App />)
