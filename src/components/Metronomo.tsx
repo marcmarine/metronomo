@@ -1,138 +1,22 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React from 'react'
 import { useTempoContext } from '../contexts/TempoContext'
-import { getAudioContext, loadSample } from '../lib/audioSample'
-import { MetronomeScheduler } from '../lib/metronomeScheduler'
-import { usePendulumFromAudioTime } from '../lib/usePendulumFromAudioTime'
+import { useMetronomeEngine } from '../lib/useMetronomeEngine'
 import { usePendulumWeightDrag } from '../lib/usePendulumWeightDrag'
 
 import './Metronomo.css'
-
-const TICK_SAMPLE_URL = 'audio/tap.wav'
 
 const Metronomo: React.FC = () => {
   const { tempo, isPlaying, tempos, setTempo } = useTempoContext()
 
   /**
-   * Keep a stable AudioContext instance for the lifetime of this component.
-   * (Do not recreate it per render.)
+   * Audio + animation engine: stable AudioContext, tick sample preloading,
+   * pendulum animation and the audio scheduler (phase-locked with the pendulum).
    */
-  const audioCtxRef = useRef<AudioContext | null>(null)
-  if (!audioCtxRef.current) {
-    audioCtxRef.current = getAudioContext()
-  }
-  const audioCtx = audioCtxRef.current
-
-  /**
-   * Preload & decode the tick sample once per AudioContext.
-   * NOTE: This is async; we store the decoded buffer in a ref once resolved.
-   */
-  const tickBufferRef = useRef<AudioBuffer | null>(null)
-  useEffect(() => {
-    if (!audioCtx) return
-
-    let cancelled = false
-
-    loadSample(audioCtx, TICK_SAMPLE_URL)
-      .then((buf) => {
-        if (cancelled) return
-        tickBufferRef.current = buf
-      })
-      .catch(() => {
-        // keep silent; scheduling will just no-op until buffer is available
-        // (you can add UI feedback if desired)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [audioCtx])
-
-  /**
-   * Visual pendulum driven from the AudioContext clock.
-   * This returns:
-   * - `pendulumStyle` to apply directly to the `.pendulo` element
-   * - `zeroCrossingTime` which is an AudioContext absolute time where the pendulum is at 0°
-   *   (we use it to align the first tick)
-   */
-  const { pendulumStyle, zeroCrossingTime } = usePendulumFromAudioTime({
-    audioCtx,
+  const { pendulumStyle, weightPosition } = useMetronomeEngine({
+    tempo,
+    tempos,
     isPlaying,
-    tempoBpm: tempo,
-    maxDegrees: 15,
-    periodBeats: 2,
-    // Schedule the first 0° crossing half a beat after starting.
-    // We will align the first tick to this same instant.
-    zeroCrossingOffsetBeats: 0.45,
-    autoResumeAudioContext: true,
   })
-
-  /**
-   * Audio scheduler instance, isolated from React rendering.
-   * We keep it in a ref and only start/stop/update it via effects.
-   */
-  const schedulerRef = useRef<MetronomeScheduler | null>(null)
-
-  // Create the scheduler once we have an AudioContext.
-  useEffect(() => {
-    if (!audioCtx) return
-
-    if (!schedulerRef.current) {
-      schedulerRef.current = new MetronomeScheduler(audioCtx, tickBufferRef.current, {
-        lookaheadMs: 25,
-        scheduleAheadTimeSec: 0.2,
-        gain: 1,
-      })
-    }
-
-    return () => {
-      // Stop on unmount
-      schedulerRef.current?.stop()
-      schedulerRef.current = null
-    }
-  }, [audioCtx])
-
-  // Keep scheduler buffer up to date when the sample finishes loading.
-  useEffect(() => {
-    const s = schedulerRef.current
-    if (!s) return
-    s.setBuffer(tickBufferRef.current)
-  })
-
-  // Start/stop and tempo updates.
-  useEffect(() => {
-    const s = schedulerRef.current
-    if (!audioCtx || !s) return
-
-    if (!isPlaying) {
-      s.stop()
-      return
-    }
-
-    // Ensure the scheduler tempo is up to date.
-    s.setTempo(tempo)
-
-    // Align the first tick to the pendulum's 0° reference time if available.
-    // If not available yet (first render), fall back to a computed half-beat offset.
-    const secondsPerBeat = 60 / Math.max(1, tempo)
-    const fallbackT0 = audioCtx.currentTime + 0.5 * secondsPerBeat
-
-    const t0 = zeroCrossingTime ?? fallbackT0
-
-    // Start (no-op if already running). If already running, we don't want to reset t0,
-    // otherwise you’ll hear a phase jump. So only start if not running.
-    if (!s.getState().running) {
-      void s.start({ tempoBpm: tempo, t0 })
-    }
-
-    return () => {
-      // On dependency changes, don't stop here; stop is handled when isPlaying becomes false.
-      // This avoids cutting off playback on tempo adjustments.
-    }
-  }, [audioCtx, isPlaying, tempo, zeroCrossingTime])
-
-  const weightPosition = useMemo(() => {
-    return `${(tempos.indexOf(tempo) / (tempos.length - 1)) * 100}%`
-  }, [tempos, tempo])
 
   const { trackRef, dragProps } = usePendulumWeightDrag({
     tempos,
