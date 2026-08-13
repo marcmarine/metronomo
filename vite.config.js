@@ -5,12 +5,5 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: {
-    open: true,
-    port: 5173,
-    strictPort: false,
-  },
-  build: {
-    outDir: 'dist',
-  },
+  base: process.env.GITHUB_ACTIONS ? '/metronomo-online/' : '/',
 })
