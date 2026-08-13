@@ -1,68 +1,39 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Metronomo Online
 
-## Available Scripts
+Metronomo online built with Vite, React 19, TypeScript and Tailwind CSS v4.
 
-In the project directory, you can run:
+## Requirements
 
-### `yarn start`
+- [Bun](https://bun.sh) (package manager)
+- Node.js 20+ (required by Vite)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Getting started
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+```sh
+bun install
+bun run dev
+```
 
-### `yarn test`
+Open http://localhost:5173 to view the app.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Scripts
 
-### `yarn build`
+| Script              | Description                          |
+| ------------------- | ------------------------------------ |
+| `bun run dev`       | Start the Vite dev server            |
+| `bun run build`     | Production build to `dist/`          |
+| `bun run preview`   | Preview the production build locally |
+| `bun run typecheck` | Run `tsc --noEmit`                   |
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Deployment
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+The site is published to GitHub Pages by the workflow in
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). On every push to
+`master` it installs dependencies, builds the app and deploys `dist/`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+GitHub Pages must be configured in the repo's **Settings → Pages → Build and
+deployment → Source: GitHub Actions**.
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Because the site is served from the `/metronomo-online/` subpath, Vite's `base`
+is set to `/metronomo-online/` during CI builds (driven by the `GITHUB_ACTIONS`
+env var) and to `/` for local development.
