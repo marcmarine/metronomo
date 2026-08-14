@@ -11,7 +11,7 @@ body {
 }
 
 .fullscreen {
-	min-height: 100vh;
+	height: 100dvh;
 	place-content: center;
 }
 

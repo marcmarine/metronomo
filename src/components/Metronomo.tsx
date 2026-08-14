@@ -38,13 +38,15 @@ const Metronomo: React.FC = () => {
 	const weightY = WEIGHT_TOP + weightRatio * (WEIGHT_BOTTOM - WEIGHT_TOP);
 
 	return (
-		<svg className="metronome" viewBox="795 350.9 410 792.2">
+		<svg className="metronome" viewBox="750 350.9 500 792.2">
 			<defs>
 				{/* Clip the pendulum (rod + weight) with a wide rectangle so it can
-					  swing freely past the body's narrow top contour. Only the very
-					  bottom of the rod (below the weight's lowest reach) is trimmed. */}
+					    swing freely past the body's narrow top contour. Only the very
+					    bottom of the rod (below the weight's lowest reach) is trimmed.
+					    Horizontal range matches the viewBox so the clip never cuts the
+					    swinging weight at the sides. */}
 				<clipPath id="metronome-pendulum-clip">
-					<rect x="770" y="360" width="800" height="492" />
+					<rect x="750" y="360" width="500" height="492" />
 				</clipPath>
 			</defs>
 
@@ -82,8 +84,7 @@ const Metronomo: React.FC = () => {
 			<path
 				id="base-inferior"
 				className="metronome__base-bottom"
-				d="M1155.6,856.4l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9H838.4c-18,0-31.7-16.2-28.7-33.9
-              l33.8-201"
+				d="M1155.6,856.4l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9H838.4c-18,0-31.7-16.2-28.7-33.9 l33.8-201"
 			/>
 			<g id="metronome-scale-marks">
 				<line
