@@ -60,6 +60,10 @@ export function usePendulumWeightDrag({
 		(event: React.PointerEvent<SVGElement>) => {
 			if (disabled) return;
 
+			// Prevent the browser from treating the drag as a page scroll,
+			// which on iOS hides the toolbar and shifts fixed/absolute elements.
+			event.preventDefault();
+
 			activePointerIdRef.current = event.pointerId;
 			event.currentTarget.setPointerCapture?.(event.pointerId);
 		},
@@ -71,6 +75,7 @@ export function usePendulumWeightDrag({
 			if (disabled) return;
 			if (activePointerIdRef.current !== event.pointerId) return;
 
+			event.preventDefault();
 			updateTempoFromPointer(event.clientY);
 		},
 		[disabled, updateTempoFromPointer],

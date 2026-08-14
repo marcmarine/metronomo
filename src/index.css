@@ -18,8 +18,9 @@ html {
 }
 
 .fullscreen {
-	height: 100dvh;
+	height: 100svh;
 	place-content: center;
+	position: relative;
 }
 
 .btn {
