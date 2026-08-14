@@ -1,14 +1,15 @@
 :root {
 	--stroke-width: 10;
 	--stroke-width-thin: 4;
-	--pendulum-width: 8px;
-	--metronome-width: 300px;
+	--pendulum-rod-width: 10;
+	--metronome-width: 380px;
 }
 
 .metronome {
 	position: relative;
 	max-width: var(--metronome-width);
 	margin: auto;
+	max-height: 80vh;
 }
 
 .tempo {
@@ -19,53 +20,32 @@
 	font-family: monospace;
 }
 
-.metronome__pendulum-clip {
-	position: absolute;
-	width: calc(var(--metronome-width) - var(--pendulum-width));
-	height: 358px;
-	top: 10px;
-	overflow: hidden;
+/* Rod of the pendulum (an SVG <line> inside the rotating <g>). */
+.metronome__pendulum-rod {
+	fill: none;
+	stroke: #313131;
+	stroke-width: var(--pendulum-rod-width);
+	stroke-linecap: round;
 }
 
-.metronome__pendulum-inner {
-	position: absolute;
-	width: calc(var(--metronome-width) - var(--pendulum-width));
-	height: 307px;
-	top: 12px;
+/* Invisible rect that captures pointer drag to change the weight position. */
+.metronome__drag-track {
+	fill: transparent;
 	touch-action: none;
 	user-select: none;
 	-webkit-user-select: none;
 	cursor: grab;
 }
 
-.metronome__pendulum-inner:active {
+.metronome__drag-track:active {
 	cursor: grabbing;
 }
 
-.metronome__pendulum {
-	transform-origin: 50% 100%;
-	position: absolute;
-
-	/* Wrapper handles centering; pendulum starts at wrapper's left edge */
-	left: 50%;
-	top: 0px;
-
-	height: 420px;
-	width: var(--pendulum-width);
-	border-radius: 8px;
-	background: #313131;
-
-	display: flex;
-	justify-content: center;
-}
-
+/* Sliding weight. In the SVG-integrated layout this is a nested <svg>;
+   it has no absolute positioning, and `top` is no longer used. */
 .metronome__weight {
-	position: absolute;
-	width: 75px;
-	left: 50%;
-	transform: translateX(-50%);
-	transition: top 80ms;
 	pointer-events: none;
+	overflow: visible;
 }
 
 .metronome__stroke {

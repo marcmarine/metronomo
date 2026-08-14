@@ -24,7 +24,7 @@ const Layout = () => {
 	});
 
 	const props = useSpring({
-		y: sidebar ? -60 : -20,
+		y: sidebar ? "-8%" : "-4%",
 		config: { tension: 420, friction: 20 },
 	});
 
@@ -34,11 +34,12 @@ const Layout = () => {
 			onChange={(enabled) => {
 				if (enabled !== isFullScreen) toggleFullScreen();
 			}}
+			className="p-4"
 		>
 			<animated.div style={props}>
 				<Metronomo />
 			</animated.div>
-			<Controls className="fixed left-1/2 -translate-x-1/2 bottom-20" />
+			<Controls className="fixed left-1/2 -translate-x-1/2 bottom-[8%]" />
 		</FullScreen>
 	);
 };
