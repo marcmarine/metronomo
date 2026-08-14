@@ -8,6 +8,13 @@ body,
 body {
 	overflow: hidden;
 	margin: 0;
+	position: fixed;
+	inset: 0;
+}
+
+html {
+	overflow: hidden;
+	overscroll-behavior: none;
 }
 
 .fullscreen {
