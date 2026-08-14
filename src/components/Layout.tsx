@@ -1,39 +1,46 @@
-
-import FullScreen from './FullScreen'
-import Metronomo from '../components/Metronomo'
-import Controls from '../components/Controls'
-import {  useLayoutContext } from '../contexts/LayoutContext'
-import {  useTempoContext } from '../contexts/TempoContext'
-import { useKeyboardControls } from '../lib/useKeyboardControls'
-import { useWheelTempo } from '../lib/useWheelTempo'
+import { animated, useSpring } from "@react-spring/web";
+import Controls from "../components/Controls";
+import Metronomo from "../components/Metronomo";
+import { useLayoutContext } from "../contexts/LayoutContext";
+import { useTempoContext } from "../contexts/TempoContext";
+import { useKeyboardControls } from "../lib/useKeyboardControls";
+import { useWheelTempo } from "../lib/useWheelTempo";
+import FullScreen from "./FullScreen";
 
 const Layout = () => {
-  const { isFullScreen, toggleFullScreen }  = useLayoutContext()
-  const { increaseTempo, decreaseTempo, togglePlay } = useTempoContext()
+	const { isFullScreen, toggleFullScreen, sidebar } = useLayoutContext();
+	const { increaseTempo, decreaseTempo, togglePlay } = useTempoContext();
 
-  useKeyboardControls({
-    increaseTempo,
-    decreaseTempo,
-    togglePlay,
-    toggleFullScreen,
-  })
+	useKeyboardControls({
+		increaseTempo,
+		decreaseTempo,
+		togglePlay,
+		toggleFullScreen,
+	});
 
-  useWheelTempo({
-    increaseTempo,
-    decreaseTempo,
-  })
+	useWheelTempo({
+		increaseTempo,
+		decreaseTempo,
+	});
 
-  return (
-    <FullScreen
-      enabled={isFullScreen}
-      onChange={(enabled) => {
-        if (enabled !== isFullScreen) toggleFullScreen()
-      }}
-    >
-      <Metronomo />
-      <Controls />
-    </FullScreen>
-  )
-}
+	const props = useSpring({
+		y: sidebar ? -60 : -20,
+		config: { tension: 420, friction: 20 },
+	});
 
-export default Layout
+	return (
+		<FullScreen
+			enabled={isFullScreen}
+			onChange={(enabled) => {
+				if (enabled !== isFullScreen) toggleFullScreen();
+			}}
+		>
+			<animated.div style={props}>
+				<Metronomo />
+			</animated.div>
+			<Controls className="fixed left-1/2 -translate-x-1/2 bottom-20" />
+		</FullScreen>
+	);
+};
+
+export default Layout;

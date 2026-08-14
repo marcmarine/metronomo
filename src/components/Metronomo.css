@@ -1,98 +1,92 @@
 :root {
-  --stroke-width: 10;
-  --stroke-width-thin: 4;
-  --pendulum-width: 8px;
-  --metronome-width: 300px;
+	--stroke-width: 10;
+	--stroke-width-thin: 4;
+	--pendulum-width: 8px;
+	--metronome-width: 300px;
 }
 
 .metronome {
-  position: relative;
-  max-width: var(--metronome-width);
-  margin: auto;
+	position: relative;
+	max-width: var(--metronome-width);
+	margin: auto;
 }
 
 .tempo {
-  text-align: center;
-  font-size: 2rem;
-  color: #313131;
-  font-weight: bolder;
-  font-family: monospace;
-}
-
-@media (max-width: 600px) {
-  .tempo {
-    display: none;
-  }
+	text-align: center;
+	font-size: 1.4rem;
+	color: #313131;
+	font-weight: bolder;
+	font-family: monospace;
 }
 
 .metronome__pendulum-clip {
-  position: absolute;
-  width: calc(var(--metronome-width) - var(--pendulum-width));
-  height: 358px;
-  top: 10px;
-  overflow: hidden;
+	position: absolute;
+	width: calc(var(--metronome-width) - var(--pendulum-width));
+	height: 358px;
+	top: 10px;
+	overflow: hidden;
 }
 
 .metronome__pendulum-inner {
-  position: absolute;
-  width: calc(var(--metronome-width) - var(--pendulum-width));
-  height: 307px;
-  top: 12px;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-   cursor: grab;
+	position: absolute;
+	width: calc(var(--metronome-width) - var(--pendulum-width));
+	height: 307px;
+	top: 12px;
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+	cursor: grab;
 }
 
 .metronome__pendulum-inner:active {
-  cursor: grabbing;
+	cursor: grabbing;
 }
 
 .metronome__pendulum {
-  transform-origin: 50% 100%;
-  position: absolute;
+	transform-origin: 50% 100%;
+	position: absolute;
 
-  /* Wrapper handles centering; pendulum starts at wrapper's left edge */
-  left: 50%;
-  top: 0px;
+	/* Wrapper handles centering; pendulum starts at wrapper's left edge */
+	left: 50%;
+	top: 0px;
 
-  height: 420px;
-  width: var(--pendulum-width);
-  border-radius: 8px;
-  background: #313131;
+	height: 420px;
+	width: var(--pendulum-width);
+	border-radius: 8px;
+	background: #313131;
 
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 
 .metronome__weight {
-  position: absolute;
-  width: 75px;
-  left: 50%;
-  transform: translateX(-50%);
-  transition: top 80ms;
-  pointer-events: none;
+	position: absolute;
+	width: 75px;
+	left: 50%;
+	transform: translateX(-50%);
+	transition: top 80ms;
+	pointer-events: none;
 }
 
 .metronome__stroke {
-  fill: none;
-  stroke: #313131;
-  stroke-width: var(--stroke-width);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-miterlimit: 10;
+	fill: none;
+	stroke: #313131;
+	stroke-width: var(--stroke-width);
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
 }
 
 .metronome__base-bottom {
-  fill: #c73d42;
+	fill: #c73d42;
 }
 
 .metronome__base-top {
-  fill: #d1d1d1;
+	fill: #d1d1d1;
 }
 
 .metronome__mark {
-  fill: none;
-  stroke: #313131;
-  stroke-width: var(--stroke-width-thin);
+	fill: none;
+	stroke: #313131;
+	stroke-width: var(--stroke-width-thin);
 }
