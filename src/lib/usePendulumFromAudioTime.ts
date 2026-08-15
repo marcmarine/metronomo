@@ -40,6 +40,14 @@ export type UsePendulumFromAudioTimeParams = {
 	 * Default: true
 	 */
 	autoResumeAudioContext?: boolean;
+
+	/**
+	 * Initial angle in degrees for the first swing after starting.
+	 * Useful for a "wind-up" gesture where the pendulum is released from a
+	 * dragged position. The animation will begin at this angle and keep the
+	 * same phase. Default: 0.
+	 */
+	initialAngle?: number;
 };
 
 export type UsePendulumFromAudioTimeResult = {
@@ -87,9 +95,11 @@ export function usePendulumFromAudioTime(
 		periodBeats = 2,
 		zeroCrossingOffsetBeats = 0.5,
 		autoResumeAudioContext = true,
+		initialAngle = 0,
 	} = params;
 
 	const rafRef = useRef<number | null>(null);
+	const startTimeRef = useRef<number | null>(null);
 	const zeroCrossingRef = useRef<number | null>(null);
 
 	const [angleDeg, setAngleDeg] = useState<number>(0);
@@ -121,24 +131,47 @@ export function usePendulumFromAudioTime(
 
 		const bpm = Math.max(1, tempoBpm);
 		const secondsPerBeat = 60 / bpm;
+		const T = periodSeconds || 0.000001;
 
-		// Define a reference AudioContext time at which the pendulum is exactly at 0°.
-		// This is the shared phase anchor for visuals and for scheduling ticks.
-		const t0 = audioCtx.currentTime + zeroCrossingOffsetBeats * secondsPerBeat;
-		zeroCrossingRef.current = t0;
+		// Wind-up support: if the pendulum is released from a dragged angle,
+		// start the visual animation immediately from that angle. The audio zero
+		// crossing is aligned with the next time the pendulum naturally returns
+		// to 0°.
+		const clampedInitialAngle = Math.max(
+			-maxDegrees,
+			Math.min(maxDegrees, initialAngle),
+		);
+		const normalizedInitial = clampedInitialAngle / maxDegrees;
+		const phase = Math.asin(normalizedInitial);
+
+		// Time until the pendulum next crosses 0° (centre), used to align audio.
+		// For a positive angle it goes right -> left, crossing at π.
+		// For a negative angle it goes left -> right, crossing at 0.
+		const zeroCrossingPhase = normalizedInitial >= 0 ? Math.PI : 0;
+		const zeroCrossingOffsetSec =
+			((zeroCrossingPhase - phase) * T) / (2 * Math.PI);
+
+		// Start visual animation from the current audio time so the pendulum
+		// begins exactly at the dragged angle without jumping to the opposite side.
+		const startTime = audioCtx.currentTime;
+		startTimeRef.current = startTime;
+
+		// Audio zero-crossing reference is slightly later, so the first tick
+		// lines up with the pendulum passing through the centre.
+		zeroCrossingRef.current =
+			startTime +
+			zeroCrossingOffsetBeats * secondsPerBeat +
+			zeroCrossingOffsetSec;
 
 		const render = () => {
 			if (cancelled) return;
-			const zt = zeroCrossingRef.current;
-			if (zt == null) return;
+			const st = startTimeRef.current;
+			if (st == null) return;
 
-			const t = audioCtx.currentTime - zt;
-			const T = periodSeconds || 0.000001;
+			const t = audioCtx.currentTime - st;
 
-			// Smooth cosine wave.
-			// Want angle(t=0) = 0 and increasing initially (towards +maxDegrees).
-			// Use sine: sin(0)=0 and derivative cos(0)=+1.
-			const normalized = Math.sin((2 * Math.PI * t) / T);
+			// Smooth sine wave starting at the wind-up angle.
+			const normalized = Math.sin((2 * Math.PI * t) / T + phase);
 
 			const angle = normalized * maxDegrees;
 			setAngleDeg(angle);
@@ -163,6 +196,7 @@ export function usePendulumFromAudioTime(
 		periodSeconds,
 		zeroCrossingOffsetBeats,
 		autoResumeAudioContext,
+		initialAngle,
 	]);
 
 	const pendulumStyle = useMemo<React.CSSProperties>(() => {

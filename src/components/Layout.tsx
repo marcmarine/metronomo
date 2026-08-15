@@ -39,7 +39,7 @@ const Layout = () => {
 			<animated.div style={props}>
 				<Metronomo />
 			</animated.div>
-			<Controls className="absolute left-1/2 -translate-x-1/2 bottom-12" />
+			<Controls className="absolute left-1/2 -translate-x-1/2 bottom-[8%]" />
 		</FullScreen>
 	);
 };

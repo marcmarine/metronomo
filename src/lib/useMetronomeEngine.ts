@@ -21,6 +21,12 @@ export type UseMetronomeEngineParams = {
 	pendulumOptions?: Partial<UsePendulumFromAudioTimeParams>;
 	/** Overrides for the scheduler timing options. */
 	schedulerOptions?: MetronomeSchedulerOptions;
+
+	/**
+	 * Initial angle in degrees for the pendulum when playback starts.
+	 * Used by the wind-up gesture.
+	 */
+	initialAngle?: number;
 };
 
 export type UseMetronomeEngineResult = {
@@ -53,6 +59,7 @@ export function useMetronomeEngine({
 	tickSampleUrl = DEFAULT_TICK_SAMPLE_URL,
 	pendulumOptions = {},
 	schedulerOptions = {},
+	initialAngle = 0,
 }: UseMetronomeEngineParams): UseMetronomeEngineResult {
 	/**
 	 * Keep a stable AudioContext instance for the lifetime of this hook.
@@ -104,6 +111,7 @@ export function useMetronomeEngine({
 			// We will align the first tick to this same instant.
 			zeroCrossingOffsetBeats: 0.45,
 			autoResumeAudioContext: true,
+			initialAngle,
 			...pendulumOptions,
 		});
 

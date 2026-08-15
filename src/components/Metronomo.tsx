@@ -1,4 +1,5 @@
 import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTempoContext } from "../contexts/TempoContext";
 import { useMetronomeEngine } from "../lib/useMetronomeEngine";
 import { usePendulumWeightDrag } from "../lib/usePendulumWeightDrag";
@@ -16,7 +17,35 @@ const WEIGHT_TOP = 382.2;
 const WEIGHT_BOTTOM = 803;
 
 const Metronomo: React.FC = () => {
-	const { tempo, isPlaying, tempos, setTempo } = useTempoContext();
+	const { tempo, isPlaying, tempos, setTempo, togglePlay } = useTempoContext();
+
+	const [releaseAngle, setReleaseAngle] = useState(0);
+
+	// Reset the wind-up angle when playback stops, so the next start from the
+	// button begins cleanly from 0°.
+	useEffect(() => {
+		if (!isPlaying) setReleaseAngle(0);
+	}, [isPlaying]);
+
+	const handleReleaseToPlay = useCallback(
+		(angle: number) => {
+			setReleaseAngle(angle);
+			togglePlay();
+		},
+		[togglePlay],
+	);
+
+	const { trackRef, dragProps, isDragging, manualAngle } =
+		usePendulumWeightDrag({
+			tempos,
+			setTempo,
+			onReleaseToPlay: handleReleaseToPlay,
+			onClick: togglePlay,
+			pivotX: PIVOT_X,
+			pivotY: PIVOT_Y,
+			maxDragAngle: 15,
+			disabled: isPlaying,
+		});
 
 	/**
 	 * Audio + animation engine: stable AudioContext, tick sample preloading,
@@ -26,16 +55,17 @@ const Metronomo: React.FC = () => {
 		tempo,
 		tempos,
 		isPlaying,
-	});
-
-	const { trackRef, dragProps } = usePendulumWeightDrag({
-		tempos,
-		setTempo,
+		initialAngle: releaseAngle,
 	});
 
 	// Map the weight's 0–100% position to a y coordinate inside the viewBox.
 	const weightRatio = parseFloat(weightPosition) / 100;
 	const weightY = WEIGHT_TOP + weightRatio * (WEIGHT_BOTTOM - WEIGHT_TOP);
+
+	// While dragging, the pendulum follows the pointer's horizontal position
+	// so the user can combine vertical tempo changes with horizontal movement.
+	const angleToRender =
+		isDragging && manualAngle != null ? manualAngle : angleDeg;
 
 	return (
 		<svg className="metronome" viewBox="750 350.9 500 792.2">
@@ -372,7 +402,7 @@ const Metronomo: React.FC = () => {
 			<g clipPath="url(#metronome-pendulum-clip)">
 				<g
 					id="metronome-pendulum"
-					transform={`rotate(${angleDeg} ${PIVOT_X} ${PIVOT_Y})`}
+					transform={`rotate(${angleToRender} ${PIVOT_X} ${PIVOT_Y})`}
 				>
 					<line
 						className="metronome__pendulum-rod"
@@ -424,10 +454,13 @@ const Metronomo: React.FC = () => {
 					<rect
 						ref={trackRef}
 						className="metronome__drag-track"
-						x="900"
+						x="800"
 						y={WEIGHT_TOP}
-						width="200"
+						width="400"
 						height={WEIGHT_BOTTOM - WEIGHT_TOP}
+						tabIndex={0}
+						role="slider"
+						aria-label="Drag sideways to start the metronome; drag vertically to change the tempo; click to start or stop"
 						{...dragProps}
 					/>
 				</g>
