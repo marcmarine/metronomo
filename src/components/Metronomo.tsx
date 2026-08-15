@@ -50,8 +50,7 @@ const Metronomo: React.FC = () => {
 		[togglePlay],
 	);
 
-	const { trackRef, dragProps, isDragging, manualAngle } =
-		usePendulumWeightDrag({
+	const { trackRef, dragProps, isDragging, manualAngle } = usePendulumWeightDrag({
 			tempos,
 			setTempo,
 			onReleaseToPlay: handleReleaseToPlay,

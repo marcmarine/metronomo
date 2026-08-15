@@ -3,6 +3,8 @@ import React, { createContext, useState } from 'react';
 export type LayoutContextValue = {
   sidebar: boolean
   isFullScreen: boolean
+  isDragging: boolean
+  setIsDragging: (value: boolean) => void
   toggleSidebar: () => void
   toggleFullScreen: () => void
 }
@@ -16,11 +18,19 @@ type LayoutContextProviderProps = {
 const LayoutContextProvider = ({ children }: LayoutContextProviderProps) => {
   const [sidebar, setSidebar] = useState(false)
   const [isFullScreen, setIsFullScreen] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   const toggleSidebar = () => setSidebar((s) => !s)
   const toggleFullScreen = () => setIsFullScreen((f) => !f)
 
-  const value: LayoutContextValue = { sidebar, toggleSidebar, isFullScreen, toggleFullScreen }
+  const value: LayoutContextValue = {
+    sidebar,
+    toggleSidebar,
+    isFullScreen,
+    toggleFullScreen,
+    isDragging,
+    setIsDragging,
+  }
 
   return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>
 }

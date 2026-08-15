@@ -1,5 +1,4 @@
 import { animated, useSpring } from "@react-spring/web";
-import Controls from "../components/Controls";
 import Metronomo from "../components/Metronomo";
 import { useLayoutContext } from "../contexts/LayoutContext";
 import { useTempoContext } from "../contexts/TempoContext";
@@ -8,8 +7,8 @@ import { useWheelTempo } from "../lib/useWheelTempo";
 import FullScreen from "./FullScreen";
 
 const Layout = () => {
-	const { isFullScreen, toggleFullScreen, sidebar } = useLayoutContext();
-	const { increaseTempo, decreaseTempo, togglePlay } = useTempoContext();
+	const { isFullScreen, toggleFullScreen, isDragging } = useLayoutContext();
+	const { tempo, increaseTempo, decreaseTempo, togglePlay } = useTempoContext();
 
 	useKeyboardControls({
 		increaseTempo,
@@ -20,13 +19,12 @@ const Layout = () => {
 
 	useWheelTempo({
 		increaseTempo,
-		decreaseTempo,
-	});
+    decreaseTempo,
+  });
 
-	const props = useSpring({
-		y: sidebar ? "-8%" : "-4%",
-		config: { tension: 420, friction: 20 },
-	});
+	 const tempoProps = useSpring({
+     opacity: isDragging ? 1 : 0,
+  })
 
 	return (
 		<FullScreen
@@ -36,10 +34,8 @@ const Layout = () => {
 			}}
 			className="p-4"
 		>
-			<animated.div style={props}>
-				<Metronomo />
-			</animated.div>
-			<Controls className="absolute left-1/2 -translate-x-1/2 bottom-[8%]" />
+      <Metronomo />
+     <animated.p className="tempo absolute top-[8vw] left-[8vw]" style={tempoProps}>{tempo} ppm</animated.p>
 		</FullScreen>
 	);
 };

@@ -1,5 +1,6 @@
 import type React from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutContext } from "../contexts/LayoutContext";
 
 export type DragMode = "vertical" | "horizontal" | "both" | null;
 
@@ -94,9 +95,17 @@ export function usePendulumWeightDrag({
 	const hasHorizontalDragRef = useRef(false);
 	const hasVerticalDragRef = useRef(false);
 
+	const { setIsDragging: setLayoutIsDragging } = useLayoutContext();
+
 	const [dragMode, setDragMode] = useState<DragMode>(null);
 	const [isDragging, setIsDragging] = useState(false);
 	const [manualAngle, setManualAngle] = useState<number | null>(null);
+
+	// Mirror the local drag state to the layout context so other components can
+	// read it without receiving it from this hook.
+	useEffect(() => {
+		setLayoutIsDragging(isDragging);
+	}, [isDragging, setLayoutIsDragging]);
 
 	const parseViewBox = useCallback((svg: SVGSVGElement): { x: number; y: number; width: number; height: number } | null => {
 		const value = svg.getAttribute("viewBox");
