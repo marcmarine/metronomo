@@ -27,6 +27,21 @@ const Metronomo: React.FC = () => {
 		if (!isPlaying) setReleaseAngle(0);
 	}, [isPlaying]);
 
+	/**
+	 * Audio + animation engine: stable AudioContext, tick sample preloading,
+	 * pendulum animation and the audio scheduler (phase-locked with the pendulum).
+	 */
+	const { angleDeg, weightPosition } = useMetronomeEngine({
+		tempo,
+		tempos,
+		isPlaying,
+		initialAngle: releaseAngle,
+	});
+
+	// Map the weight's 0–100% position to a y coordinate inside the viewBox.
+	const weightRatio = parseFloat(weightPosition) / 100;
+	const weightY = WEIGHT_TOP + weightRatio * (WEIGHT_BOTTOM - WEIGHT_TOP);
+
 	const handleReleaseToPlay = useCallback(
 		(angle: number) => {
 			setReleaseAngle(angle);
@@ -43,24 +58,12 @@ const Metronomo: React.FC = () => {
 			onClick: togglePlay,
 			pivotX: PIVOT_X,
 			pivotY: PIVOT_Y,
+			weightTop: WEIGHT_TOP,
+			weightBottom: WEIGHT_BOTTOM,
+			weightY,
 			maxDragAngle: 15,
 			disabled: isPlaying,
 		});
-
-	/**
-	 * Audio + animation engine: stable AudioContext, tick sample preloading,
-	 * pendulum animation and the audio scheduler (phase-locked with the pendulum).
-	 */
-	const { angleDeg, weightPosition } = useMetronomeEngine({
-		tempo,
-		tempos,
-		isPlaying,
-		initialAngle: releaseAngle,
-	});
-
-	// Map the weight's 0–100% position to a y coordinate inside the viewBox.
-	const weightRatio = parseFloat(weightPosition) / 100;
-	const weightY = WEIGHT_TOP + weightRatio * (WEIGHT_BOTTOM - WEIGHT_TOP);
 
 	// While dragging, the pendulum follows the pointer's horizontal position
 	// so the user can combine vertical tempo changes with horizontal movement.
@@ -451,20 +454,23 @@ const Metronomo: React.FC = () => {
 							</g>
 						</g>
 					</svg>
-					<rect
-						ref={trackRef}
-						className="metronome__drag-track"
-						x="800"
-						y={WEIGHT_TOP}
-						width="400"
-						height={WEIGHT_BOTTOM - WEIGHT_TOP}
-						tabIndex={0}
-						role="slider"
-						aria-label="Drag sideways to start the metronome; drag vertically to change the tempo; click to start or stop"
-						{...dragProps}
-					/>
 				</g>
 			</g>
+
+			{/* Invisible drag target placed outside the rotated/clipped group so
+			     it always matches the weight's position and is never clipped. */}
+			<rect
+				ref={trackRef}
+				className="metronome__drag-track"
+				x={PIVOT_X - 52}
+				y={weightY}
+				width="104"
+				height="94"
+				tabIndex={0}
+				role="slider"
+				aria-label="Drag sideways to start the metronome; drag vertically to change the tempo; click to start or stop"
+				{...dragProps}
+			/>
 		</svg>
 	);
 };

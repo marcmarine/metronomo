@@ -23,6 +23,15 @@ type UsePendulumWeightDragParams = {
 	pivotX?: number;
 	pivotY?: number;
 
+	/** SVG viewBox y-coordinate of the top of the weight's vertical range. */
+	weightTop?: number;
+
+	/** SVG viewBox y-coordinate of the bottom of the weight's vertical range. */
+	weightBottom?: number;
+
+	/** SVG viewBox y-coordinate of the weight's current position. */
+	weightY?: number;
+
 	/** Maximum angle (in degrees) reachable by dragging the weight sideways. */
 	maxDragAngle?: number;
 
@@ -71,12 +80,17 @@ export function usePendulumWeightDrag({
 	pivotY = 0,
 	maxDragAngle = 15,
 	minReleaseAngle = 3,
+	weightTop = 0,
+	weightBottom = 100,
+	weightY = 50,
 	disabled = false,
 }: UsePendulumWeightDragParams): UsePendulumWeightDragResult {
 	const trackRef = useRef<SVGRectElement | null>(null);
 	const activePointerIdRef = useRef<number | null>(null);
 	const startRef = useRef<{ x: number; y: number } | null>(null);
 	const manualAngleRef = useRef<number | null>(null);
+	const startClientYRef = useRef<number>(0);
+	const startWeightYRef = useRef<number>(weightY);
 	const hasHorizontalDragRef = useRef(false);
 	const hasVerticalDragRef = useRef(false);
 
@@ -84,14 +98,50 @@ export function usePendulumWeightDrag({
 	const [isDragging, setIsDragging] = useState(false);
 	const [manualAngle, setManualAngle] = useState<number | null>(null);
 
-	const getTempoFromClientY = useCallback(
-		(clientY: number) => {
-			const track = trackRef.current;
-			if (!track || tempos.length === 0) return null;
+	const parseViewBox = useCallback((svg: SVGSVGElement): { x: number; y: number; width: number; height: number } | null => {
+		const value = svg.getAttribute("viewBox");
+		if (!value) return null;
+		const parts = value.trim().split(/\s+/).map(Number);
+		if (parts.length !== 4 || parts.some(Number.isNaN)) return null;
+		const [x, y, width, height] = parts as [number, number, number, number];
+		return { x, y, width, height };
+	}, []);
 
-			const rect = track.getBoundingClientRect();
-			const clampedY = Math.min(Math.max(clientY, rect.top), rect.bottom);
-			const ratio = rect.height <= 0 ? 0 : (clampedY - rect.top) / rect.height;
+	const clientToSvgPoint = useCallback(
+		(clientX: number, clientY: number) => {
+			const svg = trackRef.current?.ownerSVGElement;
+			if (!svg) return null;
+
+			const rect = svg.getBoundingClientRect();
+			const vb = parseViewBox(svg);
+			if (!vb) return null;
+			const { x, y, width, height } = vb;
+			if (width <= 0 || height <= 0) return null;
+
+			// The SVG is rendered with preserveAspectRatio="xMidYMid meet" by default.
+			const scale = Math.min(rect.width / width, rect.height / height);
+			const actualWidth = width * scale;
+			const actualHeight = height * scale;
+			const offsetX = rect.left + (rect.width - actualWidth) / 2;
+			const offsetY = rect.top + (rect.height - actualHeight) / 2;
+
+			return {
+				x: x + (clientX - offsetX) / scale,
+				y: y + (clientY - offsetY) / scale,
+			};
+		},
+		[parseViewBox],
+	);
+
+	const getTempoFromY = useCallback(
+		(y: number) => {
+			if (tempos.length === 0) return null;
+
+			const clampedY = Math.min(Math.max(y, weightTop), weightBottom);
+			const ratio =
+				weightBottom - weightTop <= 0
+					? 0
+					: (clampedY - weightTop) / (weightBottom - weightTop);
 
 			const maxIndex = tempos.length - 1;
 			const index = Math.min(
@@ -101,30 +151,29 @@ export function usePendulumWeightDrag({
 
 			return tempos[index] ?? null;
 		},
-		[tempos],
+		[tempos, weightTop, weightBottom],
 	);
 
-	const updateTempoFromPointer = useCallback(
+	const updateTempoFromClientY = useCallback(
 		(clientY: number) => {
-			const nextTempo = getTempoFromClientY(clientY);
+			const svgPoint = clientToSvgPoint(0, clientY);
+			if (!svgPoint) return;
+
+			// Keep the same vertical offset relative to the pointer that existed
+			// when the drag started, so the weight does not snap to the cursor.
+			const deltaY = svgPoint.y - startClientYRef.current;
+			const adjustedY = startWeightYRef.current + deltaY;
+			const nextTempo = getTempoFromY(adjustedY);
 			if (nextTempo == null) return;
 			setTempo(nextTempo);
 		},
-		[getTempoFromClientY, setTempo],
+		[clientToSvgPoint, getTempoFromY, setTempo],
 	);
 
 	const pointerToSvgAngle = useCallback(
 		(clientX: number, clientY: number) => {
-			const svg = trackRef.current?.ownerSVGElement;
-			if (!svg) return null;
-
-			const ctm = svg.getScreenCTM();
-			if (!ctm) return null;
-
-			const point = svg.createSVGPoint();
-			point.x = clientX;
-			point.y = clientY;
-			const svgPoint = point.matrixTransform(ctm.inverse());
+			const svgPoint = clientToSvgPoint(clientX, clientY);
+			if (!svgPoint) return null;
 
 			const dx = svgPoint.x - pivotX;
 			const dy = svgPoint.y - pivotY;
@@ -136,7 +185,7 @@ export function usePendulumWeightDrag({
 
 			return Math.max(-maxDragAngle, Math.min(maxDragAngle, angleDeg));
 		},
-		[pivotX, pivotY, maxDragAngle],
+		[clientToSvgPoint, pivotX, pivotY, maxDragAngle],
 	);
 
 	const onPointerDown = useCallback(
@@ -151,13 +200,19 @@ export function usePendulumWeightDrag({
 			hasHorizontalDragRef.current = false;
 			hasVerticalDragRef.current = false;
 			setDragMode(null);
+
+			// Store the initial vertical position of the pointer and the weight
+			// so dragging does not snap the weight to the cursor position.
+			const pointerPoint = clientToSvgPoint(event.clientX, event.clientY);
+			startClientYRef.current = pointerPoint?.y ?? 0;
+			startWeightYRef.current = weightY;
 			setIsDragging(!disabled);
 			setManualAngle(null);
 			if (!disabled) {
 				event.currentTarget.setPointerCapture?.(event.pointerId);
 			}
 		},
-		[disabled],
+		[disabled, weightY, clientToSvgPoint],
 	);
 
 	const onPointerMove = useCallback(
@@ -194,7 +249,7 @@ export function usePendulumWeightDrag({
 				setDragMode(nextMode);
 			}
 
-			updateTempoFromPointer(event.clientY);
+			updateTempoFromClientY(event.clientY);
 
 			const angle = pointerToSvgAngle(event.clientX, event.clientY);
 			if (angle != null) {
@@ -202,7 +257,7 @@ export function usePendulumWeightDrag({
 				setManualAngle(angle);
 			}
 		},
-		[disabled, dragMode, updateTempoFromPointer, pointerToSvgAngle],
+		[disabled, dragMode, updateTempoFromClientY, pointerToSvgAngle],
 	);
 
 	const clearPointer = useCallback(
@@ -228,6 +283,7 @@ export function usePendulumWeightDrag({
 			activePointerIdRef.current = null;
 			startRef.current = null;
 			manualAngleRef.current = null;
+			startWeightYRef.current = weightY;
 			hasHorizontalDragRef.current = false;
 			hasVerticalDragRef.current = false;
 			setDragMode(null);
