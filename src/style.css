@@ -31,6 +31,10 @@ body {
 	display: grid;
 	place-content: center;
 	position: relative;
+
+	&:fullscreen {
+		background-color: #7e8eb1;
+	}
 }
 
 .metronome {
@@ -108,8 +112,4 @@ body {
 	&.visible {
 		opacity: 1;
 	}
-}
-
-:fullscreen .stage {
-	background-color: #7e8eb1;
 }
