@@ -1,21 +1,114 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="favicon.ico" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Metronomo Online" />
-    <link rel="apple-touch-icon" href="logo192.png" />
-    <link rel="manifest" href="manifest.json" />
-    <title>Metronomo Online</title>
+    <meta name="theme-color" content="#7e8eb1" />
+    <meta name="description" content="Metrónomo Online" />
+    <title>Metrónomo Online</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div class="stage" id="stage">
+      <p class="tempo" id="tempo-label">60 ppm</p>
+      
+      <svg class="metronome" id="metronome-svg" viewBox="750 350.9 500 792.2">
+        <defs>
+          <clipPath id="metronome-pendulum-clip">
+            <rect x="750" y="360" width="500" height="492" />
+          </clipPath>
+        </defs>
+
+        <line
+          class="metronome__stroke"
+          x1="800"
+          y1="1138.1"
+          x2="1200"
+          y2="1138.1"
+        />
+        <circle
+          class="metronome__base-bottom"
+          cx="1145.5"
+          cy="1111.4"
+          r="22.7"
+        />
+        <circle
+          class="metronome__base-bottom"
+          cx="853.3"
+          cy="1111.4"
+          r="22.7"
+        />
+
+        <path
+          class="metronome__base-top"
+          d="M1155.6,856.4H843.4L923,380.1c2.4-14,14.5-24.2,28.7-24.2h95.3c14.2,0,26.3,10.2,28.7,24.2L1155.6,856.4z"
+        />
+        <path
+          class="metronome__base-bottom"
+          d="M1155.6,856.4l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9H838.4c-18,0-31.7-16.2-28.7-33.9 l33.8-201"
+        />
+
+        <g id="scale-marks"></g>
+
+        <path class="metronome__stroke" d="M843.4,856.6h312.2H843.4z" />
+        <path
+          class="metronome__stroke"
+          d="M864.4,1091.6c6.9,3.9,11.6,11.3,11.6,19.8c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7
+           c0-8.5,4.7-15.9,11.6-19.8l0,0h-3.8c-18,0-31.7-16.2-28.7-33.9l33.8-201v-0.2L923,380.1c2.4-14,14.5-24.2,28.7-24.2h95.3
+           c14.2,0,26.3,10.2,28.7,24.2l79.9,476.3l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9h-4.1l0,0c6.9,3.9,11.6,11.3,11.6,19.8
+           c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7c0-8.5,4.7-15.9,11.6-19.8L864.4,1091.6z"
+        />
+
+        <g clip-path="url(#metronome-pendulum-clip)">
+          <g id="pendulum-group">
+            <line
+              class="metronome__pendulum-rod"
+              id="pendulum-rod"
+              x1="999.4"
+              y1="1091"
+              x2="999.4"
+              y2="370"
+            />
+            <svg
+              id="weight-svg"
+              x="947.4"
+              y="382.2"
+              width="104"
+              height="94"
+              viewBox="0 0 104 94"
+              class="metronome__weight"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <path
+                fill="#666"
+                d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
+              />
+              <path
+                class="metronome__stroke"
+                d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
+              />
+              <circle cx="72.6" cy="28.3" r="12.5" fill="#313131" />
+              <circle cx="31.6" cy="28.3" r="12.5" fill="#313131" />
+            </svg>
+          </g>
+        </g>
+
+        <rect
+          id="drag-track"
+          class="metronome__drag-track"
+          x="947.4"
+          y="382.2"
+          width="104"
+          height="94"
+          tabindex="0"
+          role="slider"
+          aria-label="Arrastra verticalmente para cambiar el tempo; arrastra horizontalmente para lanzarlo; toca para iniciar o detener"
+        />
+      </svg>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

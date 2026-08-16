@@ -1,0 +1,116 @@
+:root {
+	--stroke-width: 10;
+	--stroke-width-thin: 4;
+	--pendulum-rod-width: 12;
+	--metronome-width: 380px;
+	--ink: #312f31;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	overflow: hidden;
+	overscroll-behavior: none;
+	margin: 0;
+	height: 100%;
+}
+
+body {
+	background-color: #7e8eb1;
+	position: fixed;
+	inset: 0;
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.stage {
+	height: 100svh;
+	width: 100%;
+	display: grid;
+	place-content: center;
+	position: relative;
+}
+
+.metronome {
+	position: relative;
+	max-width: var(--metronome-width);
+	width: 90vw;
+	max-height: 80vh;
+	margin: auto;
+	display: block;
+	touch-action: none;
+}
+
+.metronome__pendulum-rod {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: var(--pendulum-rod-width);
+	stroke-linecap: round;
+}
+
+.metronome__drag-track {
+	fill: transparent;
+	touch-action: none;
+	user-select: none;
+	cursor: grab;
+}
+.metronome__drag-track:active {
+	cursor: grabbing;
+}
+
+.metronome__weight {
+	pointer-events: none;
+	overflow: visible;
+}
+
+.metronome__stroke {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: var(--stroke-width);
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+.metronome__base-bottom {
+	fill: #c73d42;
+}
+.metronome__base-top {
+	fill: #d1d1d1;
+}
+.metronome__mark {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: var(--stroke-width-thin);
+}
+
+.tempo {
+	position: absolute;
+	top: 1.5rem;
+	left: 1.5rem;
+	text-align: center;
+	font-size: 1.4rem;
+	color: var(--ink);
+	font-weight: 700;
+	font-family: monospace;
+	margin: 0;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.8s ease 1s;
+
+	@media (max-width: 600px) {
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	&.visible {
+		opacity: 1;
+		transition: opacity 0.5s ease 0s;
+	}
+}
+
+:fullscreen .stage {
+	background-color: #7e8eb1;
+}
