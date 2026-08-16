@@ -61,6 +61,18 @@ function renderPendulumAngle(angleDeg: number): void {
 	);
 }
 
+let hideTempoLabelTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function flashTempoLabel(): void {
+	tempoLabel.classList.add("visible");
+
+	if (hideTempoLabelTimeout != null) clearTimeout(hideTempoLabelTimeout);
+	hideTempoLabelTimeout = setTimeout(() => {
+		tempoLabel.classList.remove("visible");
+		hideTempoLabelTimeout = null;
+	}, 1800);
+}
+
 function setTempoIndex(
 	index: number,
 	{ stop = true }: { stop?: boolean } = {},
@@ -70,6 +82,7 @@ function setTempoIndex(
 	renderWeightPosition();
 	renderTempoLabel();
 	dragController.setTempoIndex(tempoIndex);
+	flashTempoLabel();
 }
 
 // ---------- Audio (created lazily on first user gesture) ----------
@@ -152,8 +165,6 @@ const dragController = new WeightDragController(svg, dragTrack, {
 	onCancel: () => {
 		if (!isPlaying) renderPendulumAngle(0);
 	},
-	onDragStart: () => tempoLabel.classList.add("visible"),
-	onDragEnd: () => tempoLabel.classList.remove("visible"),
 });
 dragController.setTempoIndex(tempoIndex);
 
