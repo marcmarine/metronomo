@@ -11,16 +11,17 @@
     <title>Metrónomo Online</title>
   </head>
   <body>
-    <div class="stage" id="stage">
-      <p class="tempo" id="tempo-label">60 ppm</p>
-      
-      <svg class="metronome" id="metronome-svg" viewBox="750 350.9 500 792.2">
+    <div class="stage">
+      <div class="tempo-wrapper">
+        <h4 class="tempo-wrapper__bpm">60 ppm</h4>
+        <h5 class="tempo-wrapper__name">Allegro</h5>
+      </div>
+      <svg class="metronome" viewBox="750 350.9 500 792.2">
         <defs>
           <clipPath id="metronome-pendulum-clip">
             <rect x="750" y="360" width="500" height="492" />
           </clipPath>
         </defs>
-
         <line
           class="metronome__stroke"
           x1="800"
@@ -40,7 +41,6 @@
           cy="1111.4"
           r="22.7"
         />
-
         <path
           class="metronome__base-top"
           d="M1155.6,856.4H843.4L923,380.1c2.4-14,14.5-24.2,28.7-24.2h95.3c14.2,0,26.3,10.2,28.7,24.2L1155.6,856.4z"
@@ -49,9 +49,7 @@
           class="metronome__base-bottom"
           d="M1155.6,856.4l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9H838.4c-18,0-31.7-16.2-28.7-33.9 l33.8-201"
         />
-
-        <g id="scale-marks"></g>
-
+        <g class="metronome__marks"></g>
         <path class="metronome__stroke" d="M843.4,856.6h312.2H843.4z" />
         <path
           class="metronome__stroke"
@@ -60,19 +58,16 @@
            c14.2,0,26.3,10.2,28.7,24.2l79.9,476.3l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9h-4.1l0,0c6.9,3.9,11.6,11.3,11.6,19.8
            c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7c0-8.5,4.7-15.9,11.6-19.8L864.4,1091.6z"
         />
-
         <g clip-path="url(#metronome-pendulum-clip)">
-          <g id="pendulum-group">
+          <g class="metronome__pendulum-group">
             <line
               class="metronome__pendulum-rod"
-              id="pendulum-rod"
               x1="999.4"
               y1="1091"
               x2="999.4"
               y2="370"
             />
             <svg
-              id="weight-svg"
               x="947.4"
               y="382.2"
               width="104"
@@ -94,9 +89,7 @@
             </svg>
           </g>
         </g>
-
         <rect
-          id="drag-track"
           class="metronome__drag-track"
           x="947.4"
           y="382.2"
@@ -108,7 +101,6 @@
         />
       </svg>
     </div>
-
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

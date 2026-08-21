@@ -1,4 +1,5 @@
 import { loadClickBuffer } from "./lib/audio";
+import { select } from "./lib/dom";
 import { WeightDragController } from "./lib/drag";
 import { PendulumAnimator } from "./lib/pendulum";
 import { MetronomeScheduler } from "./lib/scheduler";
@@ -7,33 +8,24 @@ import {
 	clampTempoIndex,
 	PIVOT_X,
 	PIVOT_Y,
+	TEMPO_LABELS,
 	TEMPOS,
 	weightYForIndex,
 } from "./lib/tempo";
 import "./style.css";
 
 // ---------- DOM refs ----------
-const svg = document.getElementById(
-	"metronome-svg",
-) as unknown as SVGSVGElement;
-const pendulumGroup = document.getElementById(
-	"pendulum-group",
-) as unknown as SVGGElement;
-const weightSvg = document.getElementById(
-	"weight-svg",
-) as unknown as SVGSVGElement;
-const dragTrack = document.getElementById(
-	"drag-track",
-) as unknown as SVGRectElement;
-const tempoLabel = document.getElementById(
-	"tempo-label",
-) as HTMLParagraphElement;
-const marksGroup = document.getElementById(
-	"scale-marks",
-) as unknown as SVGGElement;
-const stage = document.getElementById("stage") as HTMLDivElement;
+const $svg = select<SVGSVGElement>(".metronome");
+const $pendulumGroup = select<SVGGElement>(".metronome__pendulum-group");
+const $weightSvg = select<SVGSVGElement>(".metronome__weight");
+const $dragTrack = select<SVGRectElement>(".metronome__drag-track");
+const $tempoWrapper = select<HTMLParagraphElement>(".tempo-wrapper");
+const $tempoLabel = select<HTMLParagraphElement>(".tempo-wrapper__bpm");
+const $tempoGroup = select<HTMLParagraphElement>(".tempo-wrapper__name");
+const $marksGroup = select<SVGGElement>(".metronome__marks");
+const $stage = select<HTMLDivElement>(".stage");
 
-renderScaleMarks(marksGroup);
+renderScaleMarks($marksGroup);
 
 // ---------- State ----------
 let tempoIndex = 8; // 60 ppm
@@ -46,16 +38,17 @@ function currentTempo(): number {
 // ---------- Rendering ----------
 function renderWeightPosition(): void {
 	const y = weightYForIndex(tempoIndex).toFixed(2);
-	weightSvg.setAttribute("y", y);
-	dragTrack.setAttribute("y", y);
+	$weightSvg.setAttribute("y", y);
+	$dragTrack.setAttribute("y", y);
 }
 
 function renderTempoLabel(): void {
-	tempoLabel.textContent = `${currentTempo()} ppm`;
+	$tempoLabel.textContent = `${currentTempo()} ppm`;
+	$tempoGroup.textContent = TEMPO_LABELS[tempoIndex];
 }
 
 function renderPendulumAngle(angleDeg: number): void {
-	pendulumGroup.setAttribute(
+	$pendulumGroup.setAttribute(
 		"transform",
 		`rotate(${angleDeg} ${PIVOT_X} ${PIVOT_Y})`,
 	);
@@ -64,11 +57,11 @@ function renderPendulumAngle(angleDeg: number): void {
 let hideTempoLabelTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function flashTempoLabel(): void {
-	tempoLabel.classList.add("visible");
+	$tempoWrapper.classList.add("visible");
 
 	if (hideTempoLabelTimeout != null) clearTimeout(hideTempoLabelTimeout);
 	hideTempoLabelTimeout = setTimeout(() => {
-		tempoLabel.classList.remove("visible");
+		$tempoWrapper.classList.remove("visible");
 		hideTempoLabelTimeout = null;
 	}, 1800);
 }
@@ -154,7 +147,7 @@ audioCtx = new AudioContext();
 void getClickBuffer(audioCtx);
 
 // ---------- Drag: vertical = tempo, horizontal = wind-up, tap = play/pause ----------
-const dragController = new WeightDragController(svg, dragTrack, {
+const dragController = new WeightDragController($svg, $dragTrack, {
 	isLocked: () => isPlaying,
 	onTempoDrag: (index) => setTempoIndex(index, { stop: false }),
 	onAngleDrag: (angleDeg) => renderPendulumAngle(angleDeg),
@@ -218,7 +211,7 @@ window.addEventListener(
 // ---------- Fullscreen ----------
 function toggleFullscreen(): void {
 	if (!document.fullscreenElement)
-		void stage.requestFullscreen?.().catch(() => {});
+		void $stage.requestFullscreen?.().catch(() => {});
 	else void document.exitFullscreen?.().catch(() => {});
 }
 

@@ -1,9 +1,40 @@
 /** Available tempos in beats per minute, 40–208 ppm — same scale as a real metronome. */
 export const TEMPOS: readonly number[] = [
-  40, 44, 48, 50, 52, 54, 56, 58, 60, 63, 66, 69, 72, 76, 80, 84, 88, 92, 96,
-  100, 104, 108, 112, 116, 120, 126, 132, 138, 144, 152, 160, 168, 176, 184,
-  192, 200, 208,
+	40, 44, 48, 50, 52, 54, 56, 58, 60, 63, 66, 69, 72, 76, 80, 84, 88, 92, 96,
+	100, 104, 108, 112, 116, 120, 126, 132, 138, 144, 152, 160, 168, 176, 184,
+	192, 200, 208,
 ];
+
+interface TempoGroup {
+	max: number;
+	label: string;
+}
+
+const TEMPO_GROUPS: readonly TempoGroup[] = [
+	{ max: 42, label: "Grave" },
+	{ max: 46, label: "Largo" },
+	{ max: 50, label: "Larghetto" },
+	{ max: 54, label: "Adagio" },
+	{ max: 63, label: "Andante" },
+	{ max: 69, label: "Andantino" },
+	{ max: 92, label: "Moderato" },
+	{ max: 112, label: "Allegretto" },
+	{ max: 120, label: "Allegro" },
+	{ max: 138, label: "Vivace" },
+	{ max: 168, label: "Presto" },
+	{ max: Infinity, label: "Prestissimo" },
+];
+
+function tempoGroupLabel(tempo: number): string {
+	const group = TEMPO_GROUPS.find((g) => tempo <= g.max);
+	// Unreachable in practice: TEMPO_GROUPS always ends with an Infinity
+	// ceiling, so `find` only returns undefined if that invariant breaks.
+	if (!group) throw new Error(`No tempo group found for ${tempo} ppm`);
+	return group.label;
+}
+
+/** Musical tempo name (Grave, Andante, Allegro…) for each entry in TEMPOS. */
+export const TEMPO_LABELS: readonly string[] = TEMPOS.map(tempoGroupLabel);
 
 /** Pivot point the pendulum rotates around, in SVG viewBox coordinates. */
 export const PIVOT_X = 999.4;
@@ -18,17 +49,17 @@ export const PERIOD_BEATS = 2;
 
 /** Weight's y position (viewBox units) for a given tempo index. */
 export function weightYForIndex(index: number): number {
-  const ratio = index / (TEMPOS.length - 1);
-  return WEIGHT_TOP + ratio * (WEIGHT_BOTTOM - WEIGHT_TOP);
+	const ratio = index / (TEMPOS.length - 1);
+	return WEIGHT_TOP + ratio * (WEIGHT_BOTTOM - WEIGHT_TOP);
 }
 
 /** Nearest tempo index for a given weight y position (viewBox units). */
 export function tempoIndexForSvgY(y: number): number {
-  const clamped = Math.min(Math.max(y, WEIGHT_TOP), WEIGHT_BOTTOM);
-  const ratio = (clamped - WEIGHT_TOP) / (WEIGHT_BOTTOM - WEIGHT_TOP);
-  return Math.round(ratio * (TEMPOS.length - 1));
+	const clamped = Math.min(Math.max(y, WEIGHT_TOP), WEIGHT_BOTTOM);
+	const ratio = (clamped - WEIGHT_TOP) / (WEIGHT_BOTTOM - WEIGHT_TOP);
+	return Math.round(ratio * (TEMPOS.length - 1));
 }
 
 export function clampTempoIndex(index: number): number {
-  return Math.max(0, Math.min(TEMPOS.length - 1, index));
+	return Math.max(0, Math.min(TEMPOS.length - 1, index));
 }
