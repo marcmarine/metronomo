@@ -1,4 +1,4 @@
-![Metronomo](/public/metronomo.webp)
+![Metronomo](/public/og-image.webp)
 
 # Metrónomo
 
