@@ -105,9 +105,7 @@ body {
 
 	@media (max-width: 600px) {
 		top: 1rem;
-		left: 50%;
-		transform: translateX(-50%);
-		text-align: center;
+		left: 1rem;
 	}
 
 	&.visible {
