@@ -1,4 +1,4 @@
-import { loadClickBuffer, unlockAudioContext } from "./lib/audio";
+import { loadClickBuffer } from "./lib/audio";
 import { select } from "./lib/dom";
 import { WeightDragController } from "./lib/drag";
 import { PendulumAnimator } from "./lib/pendulum";
@@ -13,6 +13,28 @@ import {
 	weightYForIndex,
 } from "./lib/tempo";
 import "./style.css";
+
+// ---------- Welcome screen (iOS only) ----------
+const $welcome = select<HTMLDivElement>(".welcome");
+const $welcomeEnter = select<HTMLButtonElement>(".welcome__enter");
+
+function isIOS(): boolean {
+	const ua = navigator.userAgent;
+	if (/iPad|iPhone|iPod/.test(ua)) return true;
+	// iPadOS 13+ reports as Macintosh but supports touch
+	return /Mac/.test(ua) && navigator.maxTouchPoints > 1;
+}
+
+if ($welcome && $welcomeEnter && isIOS()) {
+	$welcome.hidden = false;
+	$welcomeEnter.addEventListener(
+		"click",
+		() => {
+			$welcome.hidden = true;
+		},
+		{ once: true },
+	);
+}
 
 // ---------- DOM refs ----------
 const $svg = select<SVGSVGElement>(".metronome");
@@ -97,9 +119,8 @@ function getClickBuffer(ctx: AudioContext): Promise<AudioBuffer> {
 
 async function ensureAudio() {
 	if (!audioCtx) audioCtx = new AudioContext();
-	if (audioCtx.state !== "running") {
+	if (audioCtx.state === "suspended") {
 		await audioCtx.resume();
-		unlockAudioContext(audioCtx);
 	}
 
 	const buffer = await getClickBuffer(audioCtx);
@@ -147,10 +168,6 @@ function togglePlay(): void {
 			console.error("Could not start audio:", err),
 		); // "void" because the listener does not await the promise
 }
-
-// Starts loading the wav as soon as the page loads, without waiting for user interaction.
-audioCtx = new AudioContext();
-void getClickBuffer(audioCtx);
 
 // ---------- Drag: vertical = tempo, horizontal = wind-up, tap = play/pause ----------
 const dragController = new WeightDragController($svg, $dragTrack, {
