@@ -142,7 +142,10 @@ function stopPlaying(): void {
 
 function togglePlay(): void {
 	if (isPlaying) stopPlaying();
-	else void startPlaying(0); // "void" because the listener does not await the promise
+	else
+		void startPlaying(0).catch((err) =>
+			console.error("Could not start audio:", err),
+		); // "void" because the listener does not await the promise
 }
 
 // Starts loading the wav as soon as the page loads, without waiting for user interaction.
@@ -156,7 +159,9 @@ const dragController = new WeightDragController($svg, $dragTrack, {
 	onAngleDrag: (angleDeg) => renderPendulumAngle(angleDeg),
 	onTap: () => togglePlay(),
 	onRelease: (angleDeg) => {
-		void startPlaying(angleDeg);
+		void startPlaying(angleDeg).catch((err) =>
+			console.error("Could not start audio:", err),
+		);
 	},
 	onCancel: () => {
 		if (!isPlaying) renderPendulumAngle(0);
