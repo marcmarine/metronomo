@@ -161,6 +161,9 @@ const dragController = new WeightDragController($svg, $dragTrack, {
 	onCancel: () => {
 		if (!isPlaying) renderPendulumAngle(0);
 	},
+	onDragStart: () => {
+		void ensureAudio();
+	},
 });
 dragController.setTempoIndex(tempoIndex);
 
