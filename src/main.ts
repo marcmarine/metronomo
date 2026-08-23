@@ -97,7 +97,7 @@ function getClickBuffer(ctx: AudioContext): Promise<AudioBuffer> {
 
 async function ensureAudio() {
 	if (!audioCtx) audioCtx = new AudioContext();
-	if (audioCtx.state === "suspended") {
+	if (audioCtx.state !== "running") {
 		await audioCtx.resume();
 		unlockAudioContext(audioCtx);
 	}
