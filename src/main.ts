@@ -1,4 +1,4 @@
-import { loadClickBuffer } from "./lib/audio";
+import { loadClickBuffer, unlockAudioContext } from "./lib/audio";
 import { select } from "./lib/dom";
 import { WeightDragController } from "./lib/drag";
 import { PendulumAnimator } from "./lib/pendulum";
@@ -97,7 +97,10 @@ function getClickBuffer(ctx: AudioContext): Promise<AudioBuffer> {
 
 async function ensureAudio() {
 	if (!audioCtx) audioCtx = new AudioContext();
-	if (audioCtx.state === "suspended") await audioCtx.resume();
+	if (audioCtx.state === "suspended") {
+		await audioCtx.resume();
+		unlockAudioContext(audioCtx);
+	}
 
 	const buffer = await getClickBuffer(audioCtx);
 	if (!scheduler) scheduler = new MetronomeScheduler(audioCtx, buffer);

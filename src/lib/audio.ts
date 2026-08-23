@@ -51,3 +51,17 @@ export function playSampleAt(
 
 	source.start(when);
 }
+
+/**
+ * iOS Safari (and sometimes Android Chrome) may resolve `resume()` before
+ * the audio clock is actually advancing: currentTime stays "stuck" for a
+ * moment right after unlocking. Playing a silent buffer forces the audio
+ * thread to actually start before we rely on currentTime for anything else.
+ */
+export function unlockAudioContext(ctx: AudioContext): void {
+	const buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+	const source = ctx.createBufferSource();
+	source.buffer = buffer;
+	source.connect(ctx.destination);
+	source.start(0);
+}
