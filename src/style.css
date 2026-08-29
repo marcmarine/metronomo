@@ -54,6 +54,17 @@ body {
 	stroke-linecap: round;
 }
 
+.metronome__rod-drag-track {
+	fill: transparent;
+	touch-action: none;
+	user-select: none;
+	cursor: grab;
+}
+
+.metronome__rod-drag-track:active {
+	cursor: grabbing;
+}
+
 .metronome__drag-track {
 	fill: transparent;
 	touch-action: none;

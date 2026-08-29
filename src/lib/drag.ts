@@ -28,6 +28,12 @@ interface SvgPoint {
 	y: number;
 }
 
+/** A pointer-interactive element, and whether pressing it allows vertical (tempo) dragging. */
+export interface DragTarget {
+	element: SVGElement;
+	allowVerticalDrag: boolean;
+}
+
 /**
  * Wires pointer events on the drag target to tempo changes, the wind-up
  * gesture, and tap-to-toggle — converting client coordinates into the SVG's
@@ -35,10 +41,12 @@ interface SvgPoint {
  */
 export class WeightDragController {
 	private readonly svg: SVGSVGElement;
-	private readonly target: SVGElement;
+	private readonly targets: DragTarget[];
 	private readonly callbacks: DragCallbacks;
 
 	private activePointerId: number | null = null;
+	private activeElement: SVGElement | null = null;
+	private activeAllowsVertical = true;
 	private dragStartClient: { x: number; y: number } | null = null;
 	private dragStartSvgY = 0;
 	private dragStartWeightY = 0;
@@ -49,17 +57,21 @@ export class WeightDragController {
 
 	constructor(
 		svg: SVGSVGElement,
-		target: SVGElement,
+		targets: DragTarget[],
 		callbacks: DragCallbacks,
 	) {
 		this.svg = svg;
-		this.target = target;
+		this.targets = targets;
 		this.callbacks = callbacks;
 
-		target.addEventListener("pointerdown", this.onPointerDown);
-		target.addEventListener("pointermove", this.onPointerMove);
-		target.addEventListener("pointerup", this.onPointerUp);
-		target.addEventListener("pointercancel", this.onPointerUp);
+		for (const target of this.targets) {
+			target.element.addEventListener("pointerdown", (e) =>
+				this.onPointerDown(e, target),
+			);
+			target.element.addEventListener("pointermove", this.onPointerMove);
+			target.element.addEventListener("pointerup", this.onPointerUp);
+			target.element.addEventListener("pointercancel", this.onPointerUp);
+		}
 	}
 
 	/** Sync the current tempo index (needed to compute vertical-drag offsets correctly). */
@@ -92,16 +104,18 @@ export class WeightDragController {
 		return Math.max(-MAX_DRAG_ANGLE, Math.min(MAX_DRAG_ANGLE, angleDeg));
 	}
 
-	private onPointerDown = (e: PointerEvent): void => {
+	private onPointerDown = (e: PointerEvent, target: DragTarget): void => {
 		e.preventDefault();
 		this.activePointerId = e.pointerId;
+		this.activeElement = target.element;
+		this.activeAllowsVertical = target.allowVerticalDrag;
 		this.dragStartClient = { x: e.clientX, y: e.clientY };
 		this.dragStartSvgY = this.clientToSvgPoint(e.clientX, e.clientY).y;
 		this.dragStartWeightY = weightYForIndex(this.currentTempoIndex);
 		this.hasHorizontalDrag = false;
 		this.hasVerticalDrag = false;
 		this.manualAngle = null;
-		this.target.setPointerCapture(e.pointerId);
+		target.element.setPointerCapture(e.pointerId);
 		this.callbacks.onDragStart?.();
 	};
 
@@ -114,7 +128,9 @@ export class WeightDragController {
 		const dy = e.clientY - this.dragStartClient.y;
 
 		if (Math.abs(dx) > CLICK_THRESHOLD) this.hasHorizontalDrag = true;
-		if (Math.abs(dy) > CLICK_THRESHOLD) this.hasVerticalDrag = true;
+		if (this.activeAllowsVertical && Math.abs(dy) > CLICK_THRESHOLD) {
+			this.hasVerticalDrag = true;
+		}
 
 		if (this.hasVerticalDrag) {
 			const svgY = this.clientToSvgPoint(e.clientX, e.clientY).y;
@@ -147,10 +163,11 @@ export class WeightDragController {
 		this.callbacks.onDragEnd?.();
 
 		this.activePointerId = null;
+		this.activeElement?.releasePointerCapture?.(e.pointerId);
+		this.activeElement = null;
 		this.dragStartClient = null;
 		this.hasHorizontalDrag = false;
 		this.hasVerticalDrag = false;
 		this.manualAngle = null;
-		this.target.releasePointerCapture?.(e.pointerId);
 	};
 }

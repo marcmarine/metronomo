@@ -41,6 +41,7 @@ const $svg = select<SVGSVGElement>(".metronome");
 const $pendulumGroup = select<SVGGElement>(".metronome__pendulum-group");
 const $weightSvg = select<SVGSVGElement>(".metronome__weight");
 const $dragTrack = select<SVGRectElement>(".metronome__drag-track");
+const $rodDragTrack = select<SVGRectElement>(".metronome__rod-drag-track");
 const $tempoWrapper = select<HTMLParagraphElement>(".tempo-wrapper");
 const $tempoLabel = select<HTMLParagraphElement>(".tempo-wrapper__bpm");
 const $tempoGroup = select<HTMLParagraphElement>(".tempo-wrapper__name");
@@ -170,23 +171,30 @@ function togglePlay(): void {
 }
 
 // ---------- Drag: vertical = tempo, horizontal = wind-up, tap = play/pause ----------
-const dragController = new WeightDragController($svg, $dragTrack, {
-	isLocked: () => isPlaying,
-	onTempoDrag: (index) => setTempoIndex(index, { stop: false }),
-	onAngleDrag: (angleDeg) => renderPendulumAngle(angleDeg),
-	onTap: () => togglePlay(),
-	onRelease: (angleDeg) => {
-		void startPlaying(angleDeg).catch((err) =>
-			console.error("Could not start audio:", err),
-		);
+const dragController = new WeightDragController(
+	$svg,
+	[
+		{ element: $rodDragTrack, allowVerticalDrag: false },
+		{ element: $dragTrack, allowVerticalDrag: true },
+	],
+	{
+		isLocked: () => isPlaying,
+		onTempoDrag: (index) => setTempoIndex(index, { stop: false }),
+		onAngleDrag: (angleDeg) => renderPendulumAngle(angleDeg),
+		onTap: () => togglePlay(),
+		onRelease: (angleDeg) => {
+			void startPlaying(angleDeg).catch((err) =>
+				console.error("Could not start audio:", err),
+			);
+		},
+		onCancel: () => {
+			if (!isPlaying) renderPendulumAngle(0);
+		},
+		onDragStart: () => {
+			void ensureAudio();
+		},
 	},
-	onCancel: () => {
-		if (!isPlaying) renderPendulumAngle(0);
-	},
-	onDragStart: () => {
-		void ensureAudio();
-	},
-});
+);
 dragController.setTempoIndex(tempoIndex);
 
 // ---------- Keyboard shortcuts ----------
