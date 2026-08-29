@@ -1,4 +1,4 @@
-<video src="/public/og-video.mp4" poster="public/og-image.webp"  width="100%" autoplay loop muted></video>
+![Metronomo](/public/demo.webp)
 
 # Metrónomo
 
