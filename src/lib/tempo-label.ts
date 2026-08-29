@@ -17,10 +17,17 @@ export class TempoLabel {
 		this.nameEl.textContent = TEMPO_LABELS[index];
 	}
 
-	flash(): void {
+	show(): void {
 		this.wrapper.classList.add("visible");
 
-		if (this.hideTimeout != null) clearTimeout(this.hideTimeout);
+		if (this.hideTimeout != null) {
+			clearTimeout(this.hideTimeout);
+			this.hideTimeout = null;
+		}
+	}
+
+	flash(): void {
+		this.show();
 		this.hideTimeout = setTimeout(() => {
 			this.wrapper.classList.remove("visible");
 			this.hideTimeout = null;

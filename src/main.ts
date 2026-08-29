@@ -82,7 +82,6 @@ function setTempoIndex(
 	if (stop && isPlaying) stopPlaying();
 	renderWeightPosition();
 	tempoLabel.render(tempoIndex);
-	tempoLabel.flash();
 	dragController.setTempoIndex(tempoIndex);
 }
 
@@ -177,8 +176,11 @@ const dragController = new WeightDragController(
 			if (!isPlaying) renderPendulumAngle(0);
 		},
 		onDragStart: () => {
-			tempoLabel.flash();
+			tempoLabel.show();
 			void ensureAudio();
+		},
+		onDragEnd: () => {
+			tempoLabel.flash();
 		},
 	},
 );
@@ -200,9 +202,11 @@ window.addEventListener(
 		if (e.key === "ArrowUp" || e.key === "ArrowRight") {
 			e.preventDefault();
 			setTempoIndex(tempoIndex + 1);
+			tempoLabel.flash();
 		} else if (e.key === "ArrowDown" || e.key === "ArrowLeft") {
 			e.preventDefault();
 			setTempoIndex(tempoIndex - 1);
+			tempoLabel.flash();
 		} else if (e.key === " " || e.key === "p" || e.key === "P") {
 			e.preventDefault();
 			togglePlay();
@@ -227,6 +231,7 @@ window.addEventListener(
 		if (steps <= 0) return;
 		wheelAccumulator -= steps;
 		for (let i = 0; i < steps; i++) setTempoIndex(tempoIndex + direction);
+		tempoLabel.flash();
 	},
 	{ passive: false },
 );
