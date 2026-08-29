@@ -8,10 +8,10 @@ import {
 	clampTempoIndex,
 	PIVOT_X,
 	PIVOT_Y,
-	TEMPO_LABELS,
 	TEMPOS,
 	weightYForIndex,
 } from "./lib/tempo";
+import { TempoLabel } from "./lib/tempo-label";
 import "./style.css";
 
 // ---------- Welcome screen (iOS only) ----------
@@ -50,6 +50,8 @@ const $stage = select<HTMLDivElement>(".stage");
 
 renderScaleMarks($marksGroup);
 
+const tempoLabel = new TempoLabel($tempoWrapper, $tempoLabel, $tempoGroup);
+
 // ---------- State ----------
 let tempoIndex = 8; // 60 ppm
 let isPlaying = false;
@@ -65,28 +67,11 @@ function renderWeightPosition(): void {
 	$dragTrack.setAttribute("y", y);
 }
 
-function renderTempoLabel(): void {
-	$tempoLabel.textContent = `${currentTempo()} ppm`;
-	$tempoGroup.textContent = TEMPO_LABELS[tempoIndex];
-}
-
 function renderPendulumAngle(angleDeg: number): void {
 	$pendulumGroup.setAttribute(
 		"transform",
 		`rotate(${angleDeg} ${PIVOT_X} ${PIVOT_Y})`,
 	);
-}
-
-let hideTempoLabelTimeout: ReturnType<typeof setTimeout> | null = null;
-
-function flashTempoLabel(): void {
-	$tempoWrapper.classList.add("visible");
-
-	if (hideTempoLabelTimeout != null) clearTimeout(hideTempoLabelTimeout);
-	hideTempoLabelTimeout = setTimeout(() => {
-		$tempoWrapper.classList.remove("visible");
-		hideTempoLabelTimeout = null;
-	}, 1800);
 }
 
 function setTempoIndex(
@@ -96,9 +81,9 @@ function setTempoIndex(
 	tempoIndex = clampTempoIndex(index);
 	if (stop && isPlaying) stopPlaying();
 	renderWeightPosition();
-	renderTempoLabel();
+	tempoLabel.render(tempoIndex);
+	tempoLabel.flash();
 	dragController.setTempoIndex(tempoIndex);
-	flashTempoLabel();
 }
 
 // ---------- Audio (created lazily on first user gesture) ----------
@@ -136,6 +121,7 @@ async function ensureAudio() {
 }
 
 async function startPlaying(initialAngleDeg = 0): Promise<void> {
+	tempoLabel.flash();
 	if (isPlaying) return;
 	const { scheduler, pendulum } = await ensureAudio();
 	if (isPlaying) return;
@@ -191,6 +177,7 @@ const dragController = new WeightDragController(
 			if (!isPlaying) renderPendulumAngle(0);
 		},
 		onDragStart: () => {
+			tempoLabel.flash();
 			void ensureAudio();
 		},
 	},
@@ -253,5 +240,5 @@ function toggleFullscreen(): void {
 
 // ---------- Initial render ----------
 renderWeightPosition();
-renderTempoLabel();
+tempoLabel.render(tempoIndex);
 renderPendulumAngle(0);
