@@ -1,0 +1,18 @@
+{
+	"name": "Metrónomo Online",
+	"short_name": "Metrónomo",
+	"description": "Un instrumento basado en la experiencia de la subdivisión del tiempo, con un péndulo que acompaña a cada pulso.",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#7e8eb1",
+	"theme_color": "#7e8eb1",
+	"orientation": "portrait",
+	"icons": [
+		{
+			"src": "/apple-touch-icon.png",
+			"sizes": "1024x1024",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
+}

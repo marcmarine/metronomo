@@ -165,8 +165,8 @@ body {
 
 .tempo-wrapper {
 	position: absolute;
-	top: 1.5rem;
-	left: 1.5rem;
+	top: calc(env(safe-area-inset-top) + 1.5rem);
+	left: calc(env(safe-area-inset-left) + 1.5rem);
 	font-size: 1.4rem;
 	color: var(--ink);
 	font-weight: 700;
@@ -177,8 +177,8 @@ body {
 	transition: opacity 0.2s ease;
 
 	@media (max-width: 600px) {
-		top: 1rem;
-		left: 1rem;
+		top: calc(env(safe-area-inset-top) + 1rem);
+		left: calc(env(safe-area-inset-left) + 1rem);
 	}
 
 	&.visible {
