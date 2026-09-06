@@ -47,6 +47,7 @@ const $tempoLabel = select<HTMLParagraphElement>(".tempo-wrapper__bpm");
 const $tempoGroup = select<HTMLParagraphElement>(".tempo-wrapper__name");
 const $marksGroup = select<SVGGElement>(".metronome__marks");
 const $stage = select<HTMLDivElement>(".stage");
+const $gestureLayer = select<HTMLDivElement>(".stage__gesture-layer");
 
 renderScaleMarks($marksGroup);
 
@@ -156,11 +157,37 @@ function togglePlay(): void {
 }
 
 // ---------- Drag: vertical = tempo, horizontal = wind-up, tap = play/pause ----------
+// The gesture layer sits above the whole stage, so it receives every gesture.
+// Since it covers the metronome's own tracks, it reproduces their behavior by
+// hit-testing where the gesture starts: horizontal wind-up only works when
+// pressing on the weight or the rod, and the rod strip ignores vertical drags
+// (the weight takes priority where both overlap, as it did when it was on top).
+function isOverElement(el: Element, clientX: number, clientY: number): boolean {
+	const r = el.getBoundingClientRect();
+	return (
+		clientX >= r.left &&
+		clientX <= r.right &&
+		clientY >= r.top &&
+		clientY <= r.bottom
+	);
+}
+
 const dragController = new WeightDragController(
 	$svg,
 	[
-		{ element: $rodDragTrack, allowVerticalDrag: false },
-		{ element: $dragTrack, allowVerticalDrag: true },
+		{
+			element: $gestureLayer,
+			allowVerticalDrag: (x, y) =>
+				isOverElement($dragTrack, x, y) || !isOverElement($rodDragTrack, x, y),
+			allowHorizontalDrag: (x, y) =>
+				isOverElement($dragTrack, x, y) || isOverElement($rodDragTrack, x, y),
+		},
+		{
+			element: $rodDragTrack,
+			allowVerticalDrag: false,
+			allowHorizontalDrag: true,
+		},
+		{ element: $dragTrack, allowVerticalDrag: true, allowHorizontalDrag: true },
 	],
 	{
 		isLocked: () => isPlaying,

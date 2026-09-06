@@ -48,6 +48,17 @@ body {
 	touch-action: none;
 }
 
+.stage__gesture-layer {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+}
+
 .metronome__pendulum-rod {
 	fill: none;
 	stroke: var(--ink);

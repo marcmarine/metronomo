@@ -28,14 +28,20 @@ interface SvgPoint {
 	y: number;
 }
 
-/** A pointer-interactive element, and whether pressing it allows vertical (tempo) dragging. */
+/** Whether a drag axis is allowed — fixed, or decided by where the gesture starts. */
+type DragPermission = boolean | ((clientX: number, clientY: number) => boolean);
+
+/** A pointer-interactive element, and the drag axes it allows. */
 export interface DragTarget {
-	element: SVGElement;
-	allowVerticalDrag: boolean;
+	element: Element;
+	/** Vertical dragging changes the tempo (moves the weight). */
+	allowVerticalDrag: DragPermission;
+	/** Horizontal dragging winds the pendulum up. */
+	allowHorizontalDrag: DragPermission;
 }
 
 /**
- * Wires pointer events on the drag target to tempo changes, the wind-up
+ * Wires pointer events on the drag targets to tempo changes, the wind-up
  * gesture, and tap-to-toggle — converting client coordinates into the SVG's
  * viewBox space so it works at any render size.
  */
@@ -45,13 +51,15 @@ export class WeightDragController {
 	private readonly callbacks: DragCallbacks;
 
 	private activePointerId: number | null = null;
-	private activeElement: SVGElement | null = null;
+	private activeElement: Element | null = null;
 	private activeAllowsVertical = true;
+	private activeAllowsHorizontal = true;
 	private dragStartClient: { x: number; y: number } | null = null;
 	private dragStartSvgY = 0;
 	private dragStartWeightY = 0;
 	private hasHorizontalDrag = false;
 	private hasVerticalDrag = false;
+	private hasBlockedHorizontalDrag = false;
 	private currentTempoIndex = 0;
 	private manualAngle: number | null = null;
 
@@ -66,7 +74,7 @@ export class WeightDragController {
 
 		for (const target of this.targets) {
 			target.element.addEventListener("pointerdown", (e) =>
-				this.onPointerDown(e, target),
+				this.onPointerDown(e as PointerEvent, target),
 			);
 			target.element.addEventListener("pointermove", this.onPointerMove);
 			target.element.addEventListener("pointerup", this.onPointerUp);
@@ -105,49 +113,69 @@ export class WeightDragController {
 	}
 
 	private onPointerDown = (e: PointerEvent, target: DragTarget): void => {
+		if (this.activePointerId !== null) return; // ignore secondary touches
 		e.preventDefault();
 		this.activePointerId = e.pointerId;
 		this.activeElement = target.element;
-		this.activeAllowsVertical = target.allowVerticalDrag;
+		this.activeAllowsVertical = this.resolvePermission(
+			target.allowVerticalDrag,
+			e.clientX,
+			e.clientY,
+		);
+		this.activeAllowsHorizontal = this.resolvePermission(
+			target.allowHorizontalDrag,
+			e.clientX,
+			e.clientY,
+		);
 		this.dragStartClient = { x: e.clientX, y: e.clientY };
 		this.dragStartSvgY = this.clientToSvgPoint(e.clientX, e.clientY).y;
 		this.dragStartWeightY = weightYForIndex(this.currentTempoIndex);
 		this.hasHorizontalDrag = false;
 		this.hasVerticalDrag = false;
+		this.hasBlockedHorizontalDrag = false;
 		this.manualAngle = null;
-		target.element.setPointerCapture(e.pointerId);
+		this.setCapture(target.element, e.pointerId);
 		this.callbacks.onDragStart?.();
 	};
 
-	private onPointerMove = (e: PointerEvent): void => {
-		if (this.activePointerId !== e.pointerId || !this.dragStartClient) return;
+	private onPointerMove = (e: Event): void => {
+		const pe = e as PointerEvent;
+		if (this.activePointerId !== pe.pointerId || !this.dragStartClient) return;
 		if (this.callbacks.isLocked()) return; // e.g. pendulum already swinging: only a tap can stop it
 
-		e.preventDefault();
-		const dx = e.clientX - this.dragStartClient.x;
-		const dy = e.clientY - this.dragStartClient.y;
+		pe.preventDefault();
+		const dx = pe.clientX - this.dragStartClient.x;
+		const dy = pe.clientY - this.dragStartClient.y;
 
-		if (Math.abs(dx) > CLICK_THRESHOLD) this.hasHorizontalDrag = true;
+		if (Math.abs(dx) > CLICK_THRESHOLD) {
+			if (this.activeAllowsHorizontal) this.hasHorizontalDrag = true;
+			// Remember blocked horizontal movement so it doesn't count as a tap.
+			else this.hasBlockedHorizontalDrag = true;
+		}
 		if (this.activeAllowsVertical && Math.abs(dy) > CLICK_THRESHOLD) {
 			this.hasVerticalDrag = true;
 		}
 
 		if (this.hasVerticalDrag) {
-			const svgY = this.clientToSvgPoint(e.clientX, e.clientY).y;
+			const svgY = this.clientToSvgPoint(pe.clientX, pe.clientY).y;
 			const adjustedY = this.dragStartWeightY + (svgY - this.dragStartSvgY);
 			this.callbacks.onTempoDrag(tempoIndexForSvgY(adjustedY));
 		}
 
 		if (this.hasHorizontalDrag) {
-			this.manualAngle = this.angleFromPointer(e.clientX, e.clientY);
+			this.manualAngle = this.angleFromPointer(pe.clientX, pe.clientY);
 			this.callbacks.onAngleDrag(this.manualAngle);
 		}
 	};
 
-	private onPointerUp = (e: PointerEvent): void => {
-		if (this.activePointerId !== e.pointerId) return;
+	private onPointerUp = (e: Event): void => {
+		const pe = e as PointerEvent;
+		if (this.activePointerId !== pe.pointerId) return;
 
-		const wasTap = !this.hasHorizontalDrag && !this.hasVerticalDrag;
+		const wasTap =
+			!this.hasHorizontalDrag &&
+			!this.hasVerticalDrag &&
+			!this.hasBlockedHorizontalDrag;
 		if (wasTap) {
 			this.callbacks.onTap();
 		} else if (
@@ -162,12 +190,41 @@ export class WeightDragController {
 
 		this.callbacks.onDragEnd?.();
 
+		if (this.activeElement) {
+			this.releaseCapture(this.activeElement, pe.pointerId);
+		}
 		this.activePointerId = null;
-		this.activeElement?.releasePointerCapture?.(e.pointerId);
 		this.activeElement = null;
 		this.dragStartClient = null;
 		this.hasHorizontalDrag = false;
 		this.hasVerticalDrag = false;
+		this.hasBlockedHorizontalDrag = false;
 		this.manualAngle = null;
 	};
+
+	private resolvePermission(
+		permission: DragPermission,
+		clientX: number,
+		clientY: number,
+	): boolean {
+		return typeof permission === "function"
+			? permission(clientX, clientY)
+			: permission;
+	}
+
+	private setCapture(element: Element, pointerId: number): void {
+		try {
+			element.setPointerCapture?.(pointerId);
+		} catch {
+			// capture is best-effort; drag still works without it
+		}
+	}
+
+	private releaseCapture(element: Element, pointerId: number): void {
+		try {
+			element.releasePointerCapture?.(pointerId);
+		} catch {
+			// already released
+		}
+	}
 }
