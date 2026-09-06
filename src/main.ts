@@ -1,4 +1,4 @@
-import { loadClickBuffer } from "./lib/audio";
+import { createClickBuffer, loadClickBuffer } from "./lib/audio";
 import { select } from "./lib/dom";
 import { WeightDragController } from "./lib/drag";
 import { PendulumAnimator } from "./lib/pendulum";
@@ -97,7 +97,7 @@ function getClickBuffer(ctx: AudioContext): Promise<AudioBuffer> {
 		clickBufferPromise = loadClickBuffer(
 			ctx,
 			`${import.meta.env.BASE_URL}audio/tap.wav`,
-		);
+		).catch(() => createClickBuffer(ctx));
 	}
 	return clickBufferPromise;
 }
