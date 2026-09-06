@@ -60,6 +60,8 @@ body {
 	touch-action: none;
 	user-select: none;
 	cursor: grab;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
 }
 
 .metronome__rod-drag-track:active {
@@ -71,6 +73,12 @@ body {
 	touch-action: none;
 	user-select: none;
 	cursor: grab;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+
+	&:focus {
+		outline: none;
+	}
 }
 .metronome__drag-track:active {
 	cursor: grabbing;
@@ -174,6 +182,8 @@ body {
 	font-family: monospace;
 	margin: 0;
 	pointer-events: none;
+	-webkit-user-select: none;
+	user-select: none;
 	opacity: 0;
 	transition: opacity 0.2s ease;
 
