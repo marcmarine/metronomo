@@ -16,6 +16,7 @@ body {
 	overscroll-behavior: none;
 	margin: 0;
 	height: 100%;
+	touch-action: manipulation;
 }
 
 body {
@@ -127,6 +128,7 @@ body {
 	z-index: 100;
 	display: grid;
 	place-content: center;
+	touch-action: manipulation;
 	background-color: #7e8eb199;
 	backdrop-filter: blur(10px);
 	padding: env(safe-area-inset-top) env(safe-area-inset-right)
