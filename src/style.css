@@ -34,6 +34,10 @@ body {
 	position: relative;
 	padding-top: 2rem;
 
+	@media (display-mode: standalone) {
+		padding-top: calc(2rem + env(safe-area-inset-top));
+	}
+
 	&:fullscreen {
 		background-color: #7e8eb1;
 	}
