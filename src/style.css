@@ -35,7 +35,7 @@ body {
 	padding-top: 2rem;
 
 	@media (display-mode: standalone) {
-		padding-top: calc(2rem + env(safe-area-inset-top));
+		padding-top: calc(1.8rem + env(safe-area-inset-top));
 	}
 
 	&:fullscreen {
