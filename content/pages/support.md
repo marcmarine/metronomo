@@ -29,4 +29,4 @@ canonical: 'https://metronomo.es/soporte'
 
 ## Privacidad
 
-Metrónomo no recoge ningún dato. Más información en la [política de privacidad](https://metronomo.es/privacy).
+Metrónomo no recoge ningún dato. Más información en la [política de privacidad](https://metronomo.es/politica-de-privacidad).
