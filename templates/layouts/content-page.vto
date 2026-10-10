@@ -1,0 +1,73 @@
+{{ layout "./base.vto" {
+  lang,
+  title,
+  description,
+} }}
+
+{{ slot extraHead }}
+  {{ if canonical }}
+  <link rel="canonical" href="{{ canonical }}" />
+  {{ /if }}
+  <style>
+    :root {
+      --content-max-width: 760px;
+      --content-ink: #1f1f1f;
+      --content-muted: #5f5f5f;
+      --content-link: #1f4ea3;
+      --content-bg: #7e8eb1;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--content-bg);
+      color: var(--content-ink);
+    }
+
+    .content-page {
+      max-width: var(--content-max-width);
+      margin: 0 auto;
+      padding: 2.5rem 1.2rem 3.5rem;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      font-size: 1.05rem;
+    }
+
+    .content-page h1,
+    .content-page h2,
+    .content-page h3 {
+      line-height: 1.25;
+      margin-top: 2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .content-page h1 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .content-page p,
+    .content-page ul,
+    .content-page ol {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
+    .content-page li + li {
+      margin-top: 0.35rem;
+    }
+
+    .content-page a {
+      color: var(--content-link);
+    }
+
+    .content-page em {
+      color: var(--content-muted);
+    }
+  </style>
+{{ /slot }}
+
+<main class="content-page">
+  {{ markdownHtml }}
+</main>

@@ -11,6 +11,8 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"devDependencies": {
+		"gray-matter": "^4.0.3",
+		"markdown-it": "^14.1.0",
 		"typescript": "^5.6.0",
 		"ventojs": "^2.2.1",
 		"vite": "^6.0.0"
