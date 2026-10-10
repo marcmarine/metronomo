@@ -12,7 +12,6 @@ import {
 	weightYForIndex,
 } from "./lib/tempo";
 import { TempoLabel } from "./lib/tempo-label";
-import "./style.css";
 
 // ---------- Welcome screen (iOS only) ----------
 const $welcome = select<HTMLDivElement>(".welcome");

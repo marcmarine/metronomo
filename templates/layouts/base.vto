@@ -3,11 +3,23 @@
   <head>
     {{ include "../partials/_head.vto" { title, description } }}
 
+    <style>
+      {{ include "./base.css" }}
+    </style>
+
     {{ default extraHead }}
     {{ /default }}
     {{ extraHead }}
+
+    {{ default extraStyles }}
+    {{ /default }}
+    {{ extraStyles }}
   </head>
   <body>
     {{ content }}
+
+    {{ default extraScripts }}
+    {{ /default }}
+    {{ extraScripts }}
   </body>
 </html>

@@ -1,0 +1,60 @@
+.stage {
+  height: 100svh;
+  width: 100%;
+  display: grid;
+  place-content: center;
+  position: relative;
+  padding-top: 2rem;
+}
+
+@media (display-mode: standalone) {
+  .stage {
+    padding-top: calc(1.8rem + env(safe-area-inset-top));
+  }
+}
+
+.stage:fullscreen {
+  background-color: #7e8eb1;
+}
+
+.stage__gesture-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+.tempo-wrapper {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 1.5rem);
+  left: calc(env(safe-area-inset-left) + 1.5rem);
+  font-size: 1.3rem;
+  color: var(--ink);
+  font-weight: 700;
+  font-family: monospace;
+  margin: 0;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+@media (max-width: 600px) {
+  .tempo-wrapper {
+    top: calc(env(safe-area-inset-top) + 1rem);
+    left: calc(env(safe-area-inset-left) + 1.4rem);
+  }
+}
+
+.tempo-wrapper.visible {
+  opacity: 1;
+}
+
+.tempo-wrapper * {
+  margin: 0;
+}
