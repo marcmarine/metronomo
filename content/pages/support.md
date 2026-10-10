@@ -1,14 +1,14 @@
 ---
 title: 'Soporte | Metrónomo'
 description: 'Ayuda y soporte para la app Metrónomo: uso básico, preguntas frecuentes y contacto.'
-slug: 'support'
+slug: 'soporte'
 lang: 'es'
-canonical: 'https://metronome.cc/support'
+canonical: 'https://metronomo.es/soporte'
 ---
 
 # Soporte de Metrónomo
 
-¿Tienes una duda, has encontrado un error o quieres proponer una mejora? Escríbenos a soporte [arroba] metronome.cc e intentaremos responderte lo antes posible. Si es un error, nos ayuda mucho saber el modelo de iPhone, la versión de iOS y qué estabas haciendo cuando ocurrió.
+¿Tienes una duda, has encontrado un error o quieres proponer una mejora? Escríbenos a soporte [arroba] metronomo.es e intentaremos responderte lo antes posible. Si es un error, nos ayuda mucho saber el modelo de iPhone, la versión de iOS y qué estabas haciendo cuando ocurrió.
 
 ## Cómo se usa
 
@@ -29,4 +29,4 @@ canonical: 'https://metronome.cc/support'
 
 ## Privacidad
 
-Metrónomo no recoge ningún dato. Más información en la [política de privacidad](https://metronome.cc/privacy).
+Metrónomo no recoge ningún dato. Más información en la [política de privacidad](https://metronomo.es/privacy).

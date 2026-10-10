@@ -1,9 +1,9 @@
 ---
 title: 'Política de privacidad | Metrónomo'
 description: 'Política de privacidad de la app Metrónomo para iPhone. No recoge ni comparte datos personales.'
-slug: 'privacy'
+slug: 'politica-de-privacidad'
 lang: 'es'
-canonical: 'https://metronome.cc/privacy'
+canonical: 'https://metronomo.es/politica-de-privacidad'
 ---
 
 # Política de privacidad de Metrónomo
@@ -37,4 +37,4 @@ Si la aplicación cambia de forma que afecte a tu privacidad, actualizaremos est
 
 ## Contacto
 
-Para cualquier pregunta sobre esta política: soporte [arroba] metronome.cc.
+Para cualquier pregunta sobre esta política: soporte [arroba] metronomo.es.
