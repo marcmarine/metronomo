@@ -2,163 +2,166 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="theme-color" content="#7e8eb1" />
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <meta name="apple-mobile-web-app-title" content="Metrónomo" />
-    <title>Metrónomo</title>
-    <meta
-      name="description"
-      content="Un instrumento basado en la experiencia de la subdivisión del tiempo, con un péndulo que acompaña a cada pulso."
-    />
-    <link rel="canonical" href="https://metronome.cc/" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content="#7e8eb1" />
+<link rel="manifest" href="/manifest.json" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Metrónomo" />
+<title>Metrónomo</title>
+<meta name="description" content="Un instrumento basado en la experiencia de la subdivisión del tiempo, con un péndulo que acompaña a cada pulso." />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://metronome.cc/" />
-    <meta property="og:title" content="Metrónomo" />
-    <meta
-      property="og:description"
-      content="Un instrumento basado en la experiencia de la subdivisión del tiempo, con un péndulo que acompaña a cada pulso."
-    />
-    <meta property="og:image" content="https://metronome.cc/og-image.webp" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Metrónomo" />
 
-    <meta property="og:video" content="https://metronome.cc/og-video.mp4" />
-    <meta
-      property="og:video:secure_url"
-      content="https://metronome.cc/og-video.mp4"
-    />
-    <meta property="og:video:type" content="video/mp4" />
-    <meta property="og:video:width" content="1280" />
-    <meta property="og:video:height" content="720" />
+    
+    
+  <link rel="canonical" href="https://metronome.cc/" />
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://metronome.cc/" />
+  <meta property="og:title" content="Metrónomo" />
+  <meta
+    property="og:description"
+    content="Un instrumento basado en la experiencia de la subdivisión del tiempo, con un péndulo que acompaña a cada pulso."
+  />
+  <meta property="og:image" content="https://metronome.cc/og-image.webp" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Metrónomo" />
 
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:video" content="https://metronome.cc/og-video.mp4" />
+  <meta
+    property="og:video:secure_url"
+    content="https://metronome.cc/og-video.mp4"
+  />
+  <meta property="og:video:type" content="video/mp4" />
+  <meta property="og:video:width" content="1280" />
+  <meta property="og:video:height" content="720" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+
   </head>
   <body>
-    <div class="welcome" hidden>
-      <div class="welcome__card">
-        <h1 class="welcome__title">metronome.cc</h1>
-        <h class="welcome__description">Tap the pendulum to set the tempo.</h>
-        <button class="welcome__enter">Enter</button>
-      </div>
-    </div>
-    <div class="stage">
-      <div
-        class="stage__gesture-layer"
-        aria-label="Toca para iniciar o detener; arrastra verticalmente para cambiar el tempo; arrastra horizontalmente desde el peso o el péndulo para lanzarlo"
-      ></div>
-      <div class="tempo-wrapper">
-        <h4 class="tempo-wrapper__bpm">60 ppm</h4>
-        <h5 class="tempo-wrapper__name">Allegro</h5>
-      </div>
-      <svg class="metronome" viewBox="750 350.9 500 792.2">
-        <defs>
-          <clipPath id="metronome-pendulum-clip">
-            <rect x="750" y="360" width="500" height="492" />
-          </clipPath>
-        </defs>
+    
+
+
+
+<div class="welcome" hidden>
+  <div class="welcome__card">
+    <h1 class="welcome__title">metronome.cc</h1>
+    <h class="welcome__description">Tap the pendulum to set the tempo.</h>
+    <button class="welcome__enter">Enter</button>
+  </div>
+</div>
+<div class="stage">
+  <div
+    class="stage__gesture-layer"
+    aria-label="Toca para iniciar o detener; arrastra verticalmente para cambiar el tempo; arrastra horizontalmente desde el peso o el péndulo para lanzarlo"
+  ></div>
+  <div class="tempo-wrapper">
+    <h4 class="tempo-wrapper__bpm">60 ppm</h4>
+    <h5 class="tempo-wrapper__name">Allegro</h5>
+  </div>
+  <svg class="metronome" viewBox="750 350.9 500 792.2">
+    <defs>
+      <clipPath id="metronome-pendulum-clip">
+        <rect x="750" y="360" width="500" height="492" />
+      </clipPath>
+    </defs>
+    <line
+      class="metronome__stroke"
+      x1="800"
+      y1="1138.1"
+      x2="1200"
+      y2="1138.1"
+    />
+    <circle
+      class="metronome__base-bottom"
+      cx="1145.5"
+      cy="1111.4"
+      r="22.7"
+    />
+    <circle
+      class="metronome__base-bottom"
+      cx="853.3"
+      cy="1111.4"
+      r="22.7"
+    />
+    <path
+      class="metronome__base-top"
+      d="M1155.6,856.4H843.4L923,380.1c2.4-14,14.5-24.2,28.7-24.2h95.3c14.2,0,26.3,10.2,28.7,24.2L1155.6,856.4z"
+    />
+    <path
+      class="metronome__base-bottom"
+      d="M1155.6,856.4l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9H838.4c-18,0-31.7-16.2-28.7-33.9 l33.8-201"
+    />
+    <g class="metronome__marks"></g>
+    <path class="metronome__stroke" d="M843.4,856.6h312.2H843.4z" />
+    <path
+      class="metronome__stroke"
+      d="M864.4,1091.6c6.9,3.9,11.6,11.3,11.6,19.8c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7
+       c0-8.5,4.7-15.9,11.6-19.8l0,0h-3.8c-18,0-31.7-16.2-28.7-33.9l33.8-201v-0.2L923,380.1c2.4-14,14.5-24.2,28.7-24.2h95.3
+       c14.2,0,26.3,10.2,28.7,24.2l79.9,476.3l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9h-4.1l0,0c6.9,3.9,11.6,11.3,11.6,19.8
+       c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7c0-8.5,4.7-15.9,11.6-19.8L864.4,1091.6z"
+    />
+    <g clip-path="url(#metronome-pendulum-clip)">
+      <g class="metronome__pendulum-group">
         <line
-          class="metronome__stroke"
-          x1="800"
-          y1="1138.1"
-          x2="1200"
-          y2="1138.1"
+          class="metronome__pendulum-rod"
+          x1="999.4"
+          y1="1091"
+          x2="999.4"
+          y2="370"
         />
-        <circle
-          class="metronome__base-bottom"
-          cx="1145.5"
-          cy="1111.4"
-          r="22.7"
-        />
-        <circle
-          class="metronome__base-bottom"
-          cx="853.3"
-          cy="1111.4"
-          r="22.7"
-        />
-        <path
-          class="metronome__base-top"
-          d="M1155.6,856.4H843.4L923,380.1c2.4-14,14.5-24.2,28.7-24.2h95.3c14.2,0,26.3,10.2,28.7,24.2L1155.6,856.4z"
-        />
-        <path
-          class="metronome__base-bottom"
-          d="M1155.6,856.4l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9H838.4c-18,0-31.7-16.2-28.7-33.9 l33.8-201"
-        />
-        <g class="metronome__marks"></g>
-        <path class="metronome__stroke" d="M843.4,856.6h312.2H843.4z" />
-        <path
-          class="metronome__stroke"
-          d="M864.4,1091.6c6.9,3.9,11.6,11.3,11.6,19.8c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7
-           c0-8.5,4.7-15.9,11.6-19.8l0,0h-3.8c-18,0-31.7-16.2-28.7-33.9l33.8-201v-0.2L923,380.1c2.4-14,14.5-24.2,28.7-24.2h95.3
-           c14.2,0,26.3,10.2,28.7,24.2l79.9,476.3l33.8,201.2c3,17.7-10.7,33.9-28.7,33.9h-4.1l0,0c6.9,3.9,11.6,11.3,11.6,19.8
-           c0,12.5-10.2,22.7-22.7,22.7s-22.7-10.2-22.7-22.7c0-8.5,4.7-15.9,11.6-19.8L864.4,1091.6z"
-        />
-        <g clip-path="url(#metronome-pendulum-clip)">
-          <g class="metronome__pendulum-group">
-            <line
-              class="metronome__pendulum-rod"
-              x1="999.4"
-              y1="1091"
-              x2="999.4"
-              y2="370"
-            />
-            <svg
-              x="947.4"
-              y="382.2"
-              width="104"
-              height="94"
-              viewBox="0 0 104 94"
-              class="metronome__weight"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <path
-                fill="#666"
-                d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
-              />
-              <path
-                class="metronome__stroke"
-                d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
-              />
-              <circle cx="72.6" cy="28.3" r="12.5" fill="#313131" />
-              <circle cx="31.6" cy="28.3" r="12.5" fill="#313131" />
-            </svg>
-          </g>
-        </g>
-        <rect
-          class="metronome__rod-drag-track"
-          x="969.4"
-          y="370"
-          width="60"
-          height="490"
-        />
-        <rect
-          class="metronome__drag-track"
+        <svg
           x="947.4"
           y="382.2"
           width="104"
           height="94"
-          tabindex="0"
-          role="slider"
-          aria-label="Arrastra verticalmente para cambiar el tempo; arrastra horizontalmente para lanzarlo; toca para iniciar o detener"
-        />
-      </svg>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
+          viewBox="0 0 104 94"
+          class="metronome__weight"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <path
+            fill="#666"
+            d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
+          />
+          <path
+            class="metronome__stroke"
+            d="M86 79a13 13 0 01-12 10H30a13 13 0 01-12-10L5 15a8 8 0 018-10h78a8 8 0 018 10z"
+          />
+          <circle cx="72.6" cy="28.3" r="12.5" fill="#313131" />
+          <circle cx="31.6" cy="28.3" r="12.5" fill="#313131" />
+        </svg>
+      </g>
+    </g>
+    <rect
+      class="metronome__rod-drag-track"
+      x="969.4"
+      y="370"
+      width="60"
+      height="490"
+    />
+    <rect
+      class="metronome__drag-track"
+      x="947.4"
+      y="382.2"
+      width="104"
+      height="94"
+      tabindex="0"
+      role="slider"
+      aria-label="Arrastra verticalmente para cambiar el tempo; arrastra horizontalmente para lanzarlo; toca para iniciar o detener"
+    />
+  </svg>
+</div>
+<script type="module" src="/src/main.ts"></script>
+
   </body>
 </html>

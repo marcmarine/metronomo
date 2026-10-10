@@ -1,16 +1,18 @@
 {
-  "name": "metronomo-online",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
-  },
-  "devDependencies": {
-    "typescript": "^5.6.0",
-    "vite": "^6.0.0"
-  }
+	"name": "metronomo-online",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"templates": "bun scripts/render-templates.mjs",
+		"dev": "bun run templates && vite",
+		"build": "bun run templates && tsc && vite build",
+		"preview": "vite preview",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0",
+		"ventojs": "^2.2.1",
+		"vite": "^6.0.0"
+	}
 }
