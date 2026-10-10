@@ -1,17 +1,19 @@
 :root {
-  --background: #7e8eb1;
-  --ink: #312f31;
+	--background: #7e8eb1;
+	--ink: #312f31;
 }
 
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html,
 body {
-  margin: 0;
+	margin: 0;
 }
 
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	background-color: var(--background);
+	color: var(--ink);
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
