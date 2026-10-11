@@ -8,20 +8,20 @@ canonical: 'https://metronomo.es/politica-de-privacidad'
 
 # Política de privacidad de Metrónomo
 
-_Última actualización: 10 de octubre de 2026_
+_Última actualización: 11 de octubre de 2026_
 
 Metrónomo es una aplicación para iPhone que funciona como un metrónomo mecánico. Esta política explica qué datos trata la aplicación. La respuesta corta es: ninguno.
 
 ## Datos que recogemos
 
-Ninguno. Metrónomo no recoge, guarda ni comparte datos personales ni datos de uso:
+Ninguno. Metrónomo no recoge ni comparte datos personales ni datos de uso:
 
 - No necesita cuenta ni registro.
 - No incluye publicidad, ni herramientas de analítica o de seguimiento.
-- No se conecta a internet ni envía información a ningún servidor.
+- Solo se conecta a internet para comprobar si hay una versión nueva de la aplicación. En esa consulta no se envía ningún dato personal.
 - No pide acceso al micrófono, la cámara, los contactos, la ubicación ni a ningún otro dato del dispositivo.
 
-El tempo que eliges solo existe mientras la aplicación está abierta.
+La aplicación guarda en tu iPhone el último tempo que elegiste, para empezar con él la próxima vez. Ese dato no sale del dispositivo y se borra al eliminar la aplicación.
 
 ## Informes de fallos de Apple
 

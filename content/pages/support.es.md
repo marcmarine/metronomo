@@ -12,9 +12,10 @@ canonical: 'https://metronomo.es/soporte'
 
 ## Cómo se usa
 
-- **Empezar o parar:** toca en cualquier parte de la pantalla.
+- **Empezar:** desliza hacia un lado para darle cuerda al péndulo y suéltalo. Arranca desde ese punto, como un metrónomo de verdad. Tocar la pantalla no lo pone en marcha.
+- **Parar:** toca un momento en cualquier parte de la pantalla. Si mantienes el dedo, no se para: solo muestra el tempo.
 - **Cambiar el tempo:** desliza hacia arriba o hacia abajo para mover la pesa. Arriba es más lento y abajo más rápido, de 40 a 208 pulsaciones por minuto.
-- **Lanzar el péndulo:** desliza hacia un lado para darle cuerda y suéltalo. Arranca desde ese punto.
+- **Ver el tempo:** el tempo y su nombre (Andante, Allegro…) aparecen al deslizar hacia arriba o hacia abajo y al mantener el dedo quieto en la pantalla.
 - **Con VoiceOver:** desliza hacia arriba o abajo con un dedo para cambiar el tempo y toca dos veces para empezar o parar.
 
 ## Preguntas frecuentes
@@ -25,7 +26,7 @@ canonical: 'https://metronomo.es/soporte'
 
 **Durante una llamada el péndulo se queda quieto.** Es un problema conocido que estamos estudiando. Al colgar, toca la pantalla para pararlo y vuelve a empezar; si no responde, cierra la aplicación y ábrela de nuevo.
 
-**¿Guarda el tempo que elegí?** Todavía no: al abrir la aplicación empieza siempre a 60 pulsaciones por minuto.
+**¿Guarda el tempo que elegí?** Sí: al volver a abrir la aplicación, empieza con el último tempo que usaste. Se guarda solo en tu iPhone.
 
 ## Privacidad
 
