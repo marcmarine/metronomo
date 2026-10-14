@@ -11,17 +11,17 @@ interface TempoGroup {
 }
 
 const TEMPO_GROUPS: readonly TempoGroup[] = [
-	{ max: 42, label: "Grave" },
-	{ max: 46, label: "Largo" },
-	{ max: 50, label: "Larghetto" },
-	{ max: 54, label: "Adagio" },
-	{ max: 63, label: "Andante" },
-	{ max: 69, label: "Andantino" },
-	{ max: 92, label: "Moderato" },
-	{ max: 112, label: "Allegretto" },
-	{ max: 120, label: "Allegro" },
-	{ max: 138, label: "Vivace" },
-	{ max: 168, label: "Presto" },
+	{ max: 40, label: "Grave" },
+	{ max: 60, label: "Largo" },
+	{ max: 66, label: "Larghetto" },
+	{ max: 76, label: "Adagio" },
+	{ max: 83, label: "Andantino" },
+	{ max: 108, label: "Andante" },
+	{ max: 120, label: "Moderato" },
+	{ max: 132, label: "Allegretto" },
+	{ max: 156, label: "Allegro" },
+	{ max: 176, label: "Vivace" },
+	{ max: 200, label: "Presto" },
 	{ max: Infinity, label: "Prestissimo" },
 ];
 
