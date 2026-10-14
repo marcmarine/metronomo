@@ -53,7 +53,7 @@ renderScaleMarks($marksGroup);
 const tempoLabel = new TempoLabel($tempoWrapper, $tempoLabel, $tempoGroup);
 
 // ---------- State ----------
-let tempoIndex = 8; // 60 ppm
+let tempoIndex = TEMPOS.indexOf(120);
 let isPlaying = false;
 
 function currentTempo(): number {
