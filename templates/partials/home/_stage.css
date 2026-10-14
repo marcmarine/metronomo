@@ -32,9 +32,7 @@
   position: absolute;
   top: calc(env(safe-area-inset-top) + 1.5rem);
   left: calc(env(safe-area-inset-left) + 1.5rem);
-  font-size: 1.3rem;
   color: var(--ink);
-  font-weight: 700;
   font-family: monospace;
   margin: 0;
   pointer-events: none;
@@ -57,4 +55,14 @@
 
 .tempo-wrapper * {
   margin: 0;
+}
+
+.tempo-wrapper__bpm,
+.tempo-wrapper__name {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.tempo-wrapper__name {
+  font-style: italic;
 }
