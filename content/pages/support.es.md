@@ -12,7 +12,7 @@ canonical: 'https://metronomo.es/soporte'
 
 ## Cómo se usa
 
-- **Empezar:** desliza hacia un lado para darle cuerda al péndulo y suéltalo. Arranca desde ese punto, como un metrónomo de verdad. Tocar la pantalla no lo pone en marcha.
+- **Empezar:** desliza hacia un lado para darle cuerda al péndulo y suéltalo. Arranca desde ese punto, como un metrónomo de verdad. También puedes tocar dos veces seguidas la pantalla para que arranque desde el centro; un solo toque no lo pone en marcha.
 - **Parar:** toca un momento en cualquier parte de la pantalla. Si mantienes el dedo, no se para: solo muestra el tempo.
 - **Cambiar el tempo:** desliza hacia arriba o hacia abajo para mover la pesa. Arriba es más lento y abajo más rápido, de 40 a 208 pulsaciones por minuto.
 - **Ver el tempo:** el tempo y su nombre (Andante, Allegro…) aparecen al deslizar hacia arriba o hacia abajo y al mantener el dedo quieto en la pantalla.
@@ -31,3 +31,7 @@ canonical: 'https://metronomo.es/soporte'
 ## Privacidad
 
 Metrónomo no recoge ningún dato. Más información en la [política de privacidad](https://metronomo.es/politica-de-privacidad).
+
+## Créditos
+
+El sonido del clic procede de [«Wittner 80 BPM»](https://freesound.org/people/digifishmusic/sounds/49114/), de digifishmusic en Freesound, con licencia [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Es un fragmento breve de la grabación original.

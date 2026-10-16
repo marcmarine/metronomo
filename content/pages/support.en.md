@@ -8,11 +8,11 @@ canonical: 'https://metronomo.es/support'
 
 # Metronome Support
 
-Have a question, found a bug or want to suggest an improvement? Write to us at support [at] metronome.cc and we'll get back to you as soon as we can. If it's a bug, it helps a lot to know your iPhone model, your iOS version and what you were doing when it happened.
+Have a question, found a bug or want to suggest an improvement? Write to us at support [at] metronomo.es and we'll get back to you as soon as we can. If it's a bug, it helps a lot to know your iPhone model, your iOS version and what you were doing when it happened.
 
 ## How to use it
 
-- **Start:** swipe sideways to wind up the pendulum, then let go. It starts from there, just like a real metronome. Tapping the screen doesn't start it.
+- **Start:** swipe sideways to wind up the pendulum, then let go. It starts from there, just like a real metronome. You can also double-tap the screen to start it from the centre; a single tap doesn't start it.
 - **Stop:** tap anywhere on the screen. Holding your finger down doesn't stop it: it only shows the tempo.
 - **Change the tempo:** swipe up or down to move the weight. Up is slower and down is faster, from 40 to 208 beats per minute.
 - **See the tempo:** the tempo and its name (Andante, Allegro…) show up while you swipe up or down and when you hold your finger still on the screen.
@@ -30,4 +30,8 @@ Have a question, found a bug or want to suggest an improvement? Write to us at s
 
 ## Privacy
 
-Metronome doesn't collect any data. More details in the [privacy policy](https://metronome.cc/privacy-policy).
+Metronome doesn't collect any data. More details in the [privacy policy](https://metronomo.es/privacy-policy).
+
+## Credits
+
+The click sound comes from [“Wittner 80 BPM”](https://freesound.org/people/digifishmusic/sounds/49114/) by digifishmusic on Freesound, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). It is a short excerpt of the original recording.

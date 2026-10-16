@@ -37,4 +37,4 @@ If the app changes in a way that affects your privacy, we will update this page 
 
 ## Contact
 
-For any questions about this policy: support [at] metronome.cc.
+For any questions about this policy: support [at] metronomo.es.
